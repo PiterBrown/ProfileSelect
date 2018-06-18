@@ -1,0 +1,91 @@
+﻿@model ProfileSelect.ViewModels.AdminViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Администратор";
+}
+
+<div class="panel">
+    <div class="panel-body">
+        @using (Html.BeginForm("UploadStudentInfoFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+        {
+            <div class="form-group">
+                <input type="file" name="file" class="pull-left" />
+                <input type="submit" value="Импорт данных студента" class="btn btn-primary pull-left" />
+                <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон приоритетов импорт.xlsm">Скачать шаблон для выставления приоритетов</a>
+            </div>
+        }
+        @using (Html.BeginForm("UploadStudentPointsInfoFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <input type="file" name="file" class="pull-left" />
+                <input type="submit" value="Импорт баллов студента" class="btn btn-primary pull-left" />
+                <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон среднего балла.xlsm">Скачать шаблон для выставления среднего балла</a>
+            </div>
+        }
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-body">
+        @using (Html.BeginForm("PrintUserInfo", "Home", FormMethod.Get, new {@class = "form-horizontal", enctype = "multipart/form-data"}))
+        {
+            <div class="form-group">
+                <div class="col-md-3">
+                    @{
+                        var usersList = new List<SelectListItem> {new SelectListItem
+                        {
+                            Value = "",
+                            Text = ""
+                        } };
+                        usersList.AddRange(Model.Students.Select(d => new SelectListItem
+                        {
+                            Text = d.UserName,
+                            Value = d.Id
+                        }));
+                    }
+                    @Html.DropDownListFor(x => x.UserId, new SelectList(usersList, "Value", "Text"), new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <input type="submit" value="Печать пароля клиента" class="btn btn-primary pull-left" />
+                </div>
+            </div>
+        }
+        @using (Html.BeginForm("PrintGroupUsersInfo", "Home", FormMethod.Get, new {@class = "form-horizontal", enctype = "multipart/form-data"}))
+        {
+            <div class="form-group">
+                <div class="col-md-3">
+                    @{
+                        var groupsList = new List<SelectListItem> {new SelectListItem
+                        {
+                            Value = "",
+                            Text = ""
+                        } };
+                        groupsList.AddRange(Model.Groups.Select(d => new SelectListItem
+                        {
+                            Text = d.Name,
+                            Value = d.Id.ToString()
+                        }));
+                    }
+                    @Html.DropDownListFor(x => x.GroupId, new SelectList(groupsList, "Value", "Text"), new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <input type="submit" value="Печать паролей группы" class="btn btn-primary pull-left" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-body">
+        <div class="form-group">
+            <a class="btn btn-primary pull-left" href="@Url.Action("GetStudentsList", "Home", new {Area = "Admin"})">Скачать список студентов</a>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#UserId').selectize();
+        $('#GroupId').selectize();
+    </script>
+}

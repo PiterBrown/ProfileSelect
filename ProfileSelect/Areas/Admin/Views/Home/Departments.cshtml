@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ProfileSelect.ViewModels.DepartmentViewModel>
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Кафедры";
+}
+
+<div class="table-responsive col-md-12">
+    <a href="@Url.Action("Add", "Department", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Добавить кафедру</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Полное наименование</th>
+                <th>Короткое наименование</th>
+                <th>Компания</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.FullName</td>
+                    <td>@item.ShortName</td>
+                    <td>@(item.IsCompany ? "Да" : "Нет")</td>
+                    <td>
+                        <div id="navigation">
+                            <ul>
+                                <li><a href="@Url.Action("Edit", "Department", new {Area="Admin", item.Id})">Редактировать</a></li>
+                                <li><a href="@Url.Action("Delete", "Department", new {Area="Admin", item.Id})">Удалить</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

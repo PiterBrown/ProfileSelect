@@ -1,0 +1,57 @@
+﻿@model ProfileSelect.ViewModels.ProfileViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Редактировать направление специальности";
+}
+
+@using (Html.BeginForm("Edit", "Profile", new { Area = "Admin" }, FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    for (int i = 0; i < Model.Departments.Count; i++)
+    {
+        @Html.HiddenFor(model => Model.Departments[i].Id)
+        @Html.HiddenFor(model => Model.Departments[i].FullName)
+    }
+    for (int i = 0; i < Model.Directions.Count; i++)
+    {
+        @Html.HiddenFor(model => Model.Directions[i].Id)
+        @Html.HiddenFor(model => Model.Directions[i].Name)
+    }
+    <div class="form-group">
+        <label class="control-label col-md-2">Название</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Кафедра</label>
+        <div class="col-md-4">
+            @{
+                var departmentList = Model.Departments.Select(d => new
+                {
+                    Text = d.FullName,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.DepartmentId, new SelectList(departmentList, "Value", "Text", Model.DepartmentId), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Специальность</label>
+        <div class="col-md-4">
+            @{
+                var directionList = Model.Directions.Select(d => new
+                {
+                    Text = d.Name,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.DirectionId, new SelectList(directionList, "Value", "Text", Model.DirectionId), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary pull-left" value="Сохранить" />
+        </div>
+    </div>
+}

@@ -1,0 +1,38 @@
+﻿@model ProfileSelect.ViewModels.ClaimViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Написать заявление №" + Model.ClaimNuber;
+}
+
+<div class="table-responsive col-md-12">
+    <h3 class="pull-left margin-bottom-10">Написать заявление №@Model.ClaimNuber</h3>
+    <h4 class="pull-left">Заполните форму, расставив приоритеты от 1 до @Model.ProfilePriorities.Count, где 1 - самое приоритетное направление, а @Model.ProfilePriorities.Count - самое <strong>не</strong> приоритетное направление</h4>
+    @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank" }))
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Название кафедры</th>
+                    <th>Название профиля</th>
+                    <th>Приоритет</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 0;
+                }
+                @foreach (var item in Model.ProfilePriorities)
+                {
+                    <input type="hidden" name="ProfilePriorities[@i].Id" value="@item.Id" />
+                    <tr>
+                        <td>@item.DepartmentName</td>
+                        <td>@item.ProfileName</td>
+                        <td><input type="number" min="1" max="@Model.ProfilePriorities.Count" class="form-control" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+        <input type="submit" class="btn btn-primary pull-left" value="Отправить заявление" />
+    }
+</div>

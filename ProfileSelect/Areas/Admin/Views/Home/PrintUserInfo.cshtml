@@ -1,0 +1,41 @@
+﻿@model ProfileSelect.ViewModels.StudentViewModel
+@{
+    ViewBag.Title = "Печать информация о студенте";
+    Layout = "";
+}
+
+<style type="text/css">
+    TABLE {
+        border-collapse: collapse;
+    }
+    TD, TH {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    @@media print {
+        .print-btn {
+            display: none;
+        }
+    }
+</style>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Логин</td>
+            <td>Пароль</td>
+            <td>Действителен до</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.UserName</td>
+            <td>@Model.Password</td>
+            <td>@(Model.ValidUntil?.ToString("f") ?? "")</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    window.print();
+</script>

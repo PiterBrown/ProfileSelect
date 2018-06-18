@@ -1,0 +1,34 @@
+﻿@model ProfileSelect.ViewModels.DepartmentViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Добавить кафедру";
+}
+
+@using (Html.BeginForm("Add", "Department", new { Area = "Admin" }, FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="form-group">
+        <label class="control-label col-md-2">Полное название</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(x => x.FullName, new {@class = "form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Короткое название</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(x => x.ShortName, new {@class = "form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox pull-left">
+                @Html.CheckBoxFor(m => m.IsCompany)
+                <label>Компания?</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary pull-left" value="Добавить" />
+        </div>
+    </div>
+}

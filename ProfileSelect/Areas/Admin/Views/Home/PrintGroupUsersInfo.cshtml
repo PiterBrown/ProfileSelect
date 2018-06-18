@@ -1,0 +1,44 @@
+﻿@model IEnumerable<ProfileSelect.ViewModels.StudentViewModel>
+@{
+    ViewBag.Title = "Печать информация о группе";
+    Layout = "";
+}
+
+<style type="text/css">
+    TABLE {
+        border-collapse: collapse;
+    }
+    TD, TH {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    @@media print {
+        .print-btn {
+            display: none;
+        }
+    }
+</style>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td>Логин</td>
+        <td>Пароль</td>
+        <td>Действителен до</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var student in Model)
+    {
+        <tr>
+            <td>@student.UserName</td>
+            <td>@student.Password</td>
+            <td>@(student.ValidUntil?.ToString("f") ?? "")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    window.print();
+</script>

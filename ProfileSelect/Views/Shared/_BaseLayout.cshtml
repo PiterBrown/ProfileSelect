@@ -1,0 +1,90 @@
+﻿@using ProfileSelect.Migrations
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/styles/css")
+    @Styles.Render("~/styles/datepicker")
+    @Styles.Render("~/styles/datatables")
+    @Styles.Render("~/styles/selectize")
+    @Styles.Render("~/styles/font-awesome")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <img src="~/Content/DataTables/images/LOGO.gif" class="pull-left" height="100" />
+                    <p>Система<br> распределения<br> студентов</p>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse">
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    @if (User.IsInRole(Constants.RolesConstants.Student.Name))
+                    {
+                        <li><a data-item="dash" href="@Url.Action("Index", "Home", new {Area="Student"})">Личный кабинет</a></li>
+                        <li><a data-item="chagepass" href="@Url.Action("ChangePassword", "Home", new {Area = "Student"})">Смена пароля</a></li>
+                    }
+                    @if (User.IsInRole(Constants.RolesConstants.Admin.Name))
+                    {
+                        <li><a data-item="dash" href="@Url.Action("Index", "Home", new {Area="Admin"})">Личный кабинет</a></li>
+                        <li><a data-item="stud" href="@Url.Action("Students", "Home", new {Area="Admin"})">Студенты</a></li>
+                        <li><a data-item="dep" href="@Url.Action("Departments", "Home", new {Area="Admin"})">Кафедры</a></li>
+                        <li><a data-item="dir" href="@Url.Action("Directions", "Home", new {Area="Admin"})">Специальности</a></li>
+                        <li><a data-item="prof" href="@Url.Action("Profiles", "Home", new {Area="Admin"})">Направления специальностей</a></li>
+                        //<li><a data-item="subj" href="@Url.Action("Subjects", "Home", new {Area="Admin"})">Предметы</a></li>
+                        <li><a data-item="stat" href="@Url.Action("Statuses", "Home", new {Area="Admin"})">Статусы</a></li>
+                        <li><a data-item="groups" href="@Url.Action("Groups", "Home", new {Area="Admin"})">Группы</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div class="row">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Система распределения студентов. Институт информационных технологий</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/datepicker")
+    @Scripts.Render("~/bundles/datatables")
+    @Scripts.Render("~/bundles/selectize")
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        var activeItem = localStorage.getItem('active');
+        if (activeItem == null) {
+            $('a[data-item="dash"]').parent().addClass('active');
+        } else {
+            $('a[data-item="' + activeItem + '"]').parent().addClass('active');
+        }
+
+        $('.nav-sidebar li a').on('click', function () {
+            $('.nav-sidebar li').removeClass('active');
+            $(this).parent().addClass('active');
+            localStorage.setItem('active', $(this).data('item'));
+        });
+    </script>
+</body>
+</html>

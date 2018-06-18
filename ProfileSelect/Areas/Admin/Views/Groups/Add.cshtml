@@ -1,0 +1,85 @@
+﻿@model ProfileSelect.ViewModels.GroupViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Добавить группу";
+}
+
+@using (Html.BeginForm("Add", "Groups", new { Area = "Admin" }, FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    for (int i = 0; i < Model.Departments.Count; i++)
+    {
+        @Html.HiddenFor(model => Model.Departments[i].Id)
+        @Html.HiddenFor(model => Model.Departments[i].FullName)
+    }
+    for (int i = 0; i < Model.Directions.Count; i++)
+    {
+        @Html.HiddenFor(model => Model.Directions[i].Id)
+        @Html.HiddenFor(model => Model.Directions[i].Name)
+    }
+    for (int i = 0; i < Model.Statuses.Count; i++)
+    {
+        @Html.HiddenFor(model => Model.Statuses[i].Id)
+        @Html.HiddenFor(model => Model.Statuses[i].Name)
+    }
+    <div class="form-group">
+        <div class="col-md-6">
+            @Html.ValidationSummary()
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Название</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(x => x.Name, new {@class = "form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Количество</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(x => x.Count, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Кафедра</label>
+        <div class="col-md-4">
+            @{
+                var departmentList = Model.Departments.Select(d => new
+                {
+                    Text = d.FullName,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.DepartmentId, new SelectList(departmentList, "Value", "Text", Model.DepartmentId), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Специальность</label>
+        <div class="col-md-4">
+            @{
+                var directionList = Model.Directions.Select(d => new
+                {
+                    Text = d.Name,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.DirectionId, new SelectList(directionList, "Value", "Text", Model.DirectionId), new {@class = "form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Статус</label>
+        <div class="col-md-4">
+            @{
+                var statusesList = Model.Statuses.Select(d => new
+                {
+                    Text = d.Name,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.StatusId, new SelectList(statusesList, "Value", "Text", Model.StatusId), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary pull-left" value="Добавить" />
+        </div>
+    </div>
+}

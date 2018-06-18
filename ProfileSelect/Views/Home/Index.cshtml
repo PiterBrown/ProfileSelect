@@ -1,0 +1,64 @@
+﻿@using ProfileSelect.Models
+@using Constants = ProfileSelect.Migrations.Constants
+@model LoginViewModel
+@{
+    ViewBag.Title = "Главная страница";
+}
+
+@if (User.IsInRole(Constants.RolesConstants.Student.Name))
+{
+    Response.RedirectToRoute(new { controller = "Home", action = "Index", Area = "Student" });
+}
+@if (User.IsInRole(Constants.RolesConstants.Admin.Name))
+{
+    Response.RedirectToRoute(new { controller = "Home", action = "Index", Area = "Admin" });
+}
+<div class="row row-offcanvas row-offcanvas-right">
+    <div class="col-md-5">
+        <section id="loginForm">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                <h3>Используйте свой акканут чтобы выполнить вход</h3>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Login, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Login, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Login, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.RememberMe)
+                            @Html.LabelFor(m => m.RememberMe)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Войти" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+    <div class="col-md-7">
+        <div class="col-md-12">
+            <h2>Открыта форма для написания заявления!</h2>
+            <p>27.05.2018</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

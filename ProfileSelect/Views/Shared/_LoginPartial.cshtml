@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNet.Identity
+@using Constants = ProfileSelect.Migrations.Constants
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a href="#">@User.Identity.GetUserName()</a>
+        </li>
+        @if (User.IsInRole(Constants.RolesConstants.Student.Name))
+        {
+            <li><a href="@Url.Action("Index", "Home", new {Area="Student"})">Личный кабинет</a></li>
+        }
+        @if (User.IsInRole(Constants.RolesConstants.Admin.Name))
+        {
+            <li><a href="@Url.Action("Index", "Home", new {Area="Admin"})">Личный кабинет</a></li>
+        }
+        <li><a href="@Url.Action("LogOff", "Account", new {Area=""})">Выйти</a></li>
+    </ul>
+    }
+}
