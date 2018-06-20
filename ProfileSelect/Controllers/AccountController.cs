@@ -64,7 +64,7 @@ namespace ProfileSelect.Controllers
                 var user = await SignInManager.UserManager.FindByIdAsync(userId);
                 if (SignInManager.UserManager.IsInRole(user.Id, Migrations.Constants.RolesConstants.Student.Name))
                 {
-                    if (user.ValidUntil.HasValue && DateTime.Now > user.ValidUntil)
+                    if (user.ValidUntil.HasValue && DateTime.Now < user.ValidUntil)
                     {
                         ModelState.AddModelError("", "Истек срок действия пароля");
                         return View();
@@ -93,6 +93,16 @@ namespace ProfileSelect.Controllers
 
             try
             {
+                var user = await SignInManager.UserManager.FindByNameAsync(model.Login);
+                if (SignInManager.UserManager.IsInRole(user.Id, Migrations.Constants.RolesConstants.Student.Name))
+                {
+                    if (!user.ValidUntil.HasValue || DateTime.Now > user.ValidUntil)
+                    {
+                        ModelState.AddModelError("", "Истек срок действия пароля");
+                        return View(model);
+                    }
+                }
+
                 var result =
                     await
                         SignInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe,
@@ -100,14 +110,8 @@ namespace ProfileSelect.Controllers
                 switch (result)
                 {
                     case SignInStatus.Success:
-                        var user = await SignInManager.UserManager.FindByNameAsync(model.Login);
                         if (SignInManager.UserManager.IsInRole(user.Id, Migrations.Constants.RolesConstants.Student.Name))
                         {
-                            if (user.ValidUntil.HasValue && DateTime.Now > user.ValidUntil)
-                            {
-                                ModelState.AddModelError("", "Истек срок действия пароля");
-                                return View(model);
-                            }
                             return RedirectToAction("Index", "Home", new {Area = "Student"});
                         }
                         if (SignInManager.UserManager.IsInRole(user.Id, Migrations.Constants.RolesConstants.Admin.Name))

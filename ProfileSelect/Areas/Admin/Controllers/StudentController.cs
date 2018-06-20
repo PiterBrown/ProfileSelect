@@ -62,12 +62,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     return View(studentViewModel);
                 }
 
-                var direction = dbCotext.Directions.First(d => d.Id == studentViewModel.DirectionId);
-                var status = dbCotext.Statuses.First(d => d.Id == studentViewModel.StatusId);
-                var profile = dbCotext.Profiles.First(d => d.Id == studentViewModel.NewProfileId);
-                var currentGroup = dbCotext.Groups.First(d => d.Id == studentViewModel.CurrentGroupId);
-                var previewGroup = dbCotext.Groups.First(d => d.Id == studentViewModel.PreviewGroupId);
-                var newGroup = dbCotext.Groups.First(d => d.Id == studentViewModel.NewGroupId);
+                var direction = dbCotext.Directions.FirstOrDefault(d => d.Id == studentViewModel.DirectionId);
+                var status = dbCotext.Statuses.FirstOrDefault(d => d.Id == studentViewModel.StatusId);
+                var profile = dbCotext.Profiles.FirstOrDefault(d => d.Id == studentViewModel.NewProfileId);
+                var currentGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.CurrentGroupId);
+                var previewGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.PreviewGroupId);
+                var newGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.NewGroupId);
 
                 var student = dbCotext.Users.Add(new ApplicationUser
                 {

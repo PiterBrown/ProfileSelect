@@ -197,3 +197,7 @@ body {
 .margin-bottom-10 {
     margin-bottom: 10px;
 }
+
+.error {
+    color: red;
+}

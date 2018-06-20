@@ -7,7 +7,7 @@
 <div class="table-responsive col-md-12">
     <h3 class="pull-left margin-bottom-10">Написать заявление №@Model.ClaimNuber</h3>
     <h4 class="pull-left">Заполните форму, расставив приоритеты от 1 до @Model.ProfilePriorities.Count, где 1 - самое приоритетное направление, а @Model.ProfilePriorities.Count - самое <strong>не</strong> приоритетное направление</h4>
-    @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank" }))
+    @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank", id="send-data-form" }))
     {
         <table class="table table-bordered">
             <thead>
@@ -27,7 +27,7 @@
                     <tr>
                         <td>@item.DepartmentName</td>
                         <td>@item.ProfileName</td>
-                        <td><input type="number" min="1" max="@Model.ProfilePriorities.Count" class="form-control" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
+                        <td><input type="number" min="1" max="@Model.ProfilePriorities.Count" class="form-control user-selected-number" style="width: 70px" name="ProfilePriorities[@i].Priority" value=""/></td>
                     </tr>
                     i++;
                 }
@@ -35,7 +35,60 @@
         </table>
         <h4 class="pull-left"><strong>Внимание!</strong> Заявление необходимо распечатать и принести в аудиторию А-419! Без принесенного заявления Ваш выбор учитываться не будет!</h4>
         <input type="submit" class="btn btn-primary pull-left" value="Распечатать заявление" />
-        <a class="btn btn-primary"  href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
-
+        <a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
     }
 </div>
+
+@section scripts{
+  @Scripts.Render("~/bundles/jqueryval")
+  <script type="text/javascript">
+    jQuery.extend(jQuery.validator.messages, {
+      required: "Требуется"
+    });
+    jQuery.validator.addMethod("notEqualToGroup",
+      function(value, element, options) {
+        // get all the elements passed here with the same class
+        var elems = $(element).parents('form').find(options[0]);
+        var valueToCompare = value;
+        // count
+        var matchesFound = 0;
+        // loop each element and compare its value with the current value and increase the count every time we find one
+        jQuery.each(elems,
+          function() {
+            var thisVal = $(this).val();
+            if (thisVal === valueToCompare) {
+              matchesFound++;
+            }
+          });
+        // count should be either 0 or 1 max
+        if (this.optional(element) || matchesFound <= 1) {
+          elems.removeClass('text-danger');
+          return true;
+        } else {
+          elems.addClass('text-danger');
+        }
+      },
+      jQuery.format("Не должно быть одинаковых значений"));
+
+    $("#send-data-form").validate({
+      rules: {
+        'ProfilePriorities[0].Priority': {
+          required: true,
+          notEqualToGroup: ['.user-selected-number']
+        },
+        'ProfilePriorities[1].Priority': {
+          required: true,
+          notEqualToGroup: ['.user-selected-number']
+        },
+        'ProfilePriorities[2].Priority': {
+          required: true,
+          notEqualToGroup: ['.user-selected-number']
+        },
+        'ProfilePriorities[3].Priority': {
+          required: true,
+          notEqualToGroup: ['.user-selected-number']
+        }
+      }
+    });
+  </script>
+}
