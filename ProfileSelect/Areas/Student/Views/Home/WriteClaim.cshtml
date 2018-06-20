@@ -33,6 +33,9 @@
                 }
             </tbody>
         </table>
-        <input type="submit" class="btn btn-primary pull-left" value="Отправить заявление" />
+        <h4 class="pull-left"><strong>Внимание!</strong> Заявление необходимо распечатать и принести в аудиторию А-419! Без принесенного заявления Ваш выбор учитываться не будет!</h4>
+        <input type="submit" class="btn btn-primary pull-left" value="Распечатать заявление" />
+        <a class="btn btn-primary"  href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
+
     }
 </div>
