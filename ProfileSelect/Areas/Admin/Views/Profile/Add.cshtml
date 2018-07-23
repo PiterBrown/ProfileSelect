@@ -37,7 +37,20 @@
                     Value = d.Id
                 });
             }
-            @Html.DropDownListFor(x => x.DepartmentId, new SelectList(departmentList, "Value", "Text", Model.DepartmentId), new {@class = "form-control"})
+            @Html.DropDownListFor(x => x.DepartmentId, new SelectList(departmentList, "Value", "Text", Model.DepartmentId), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Базовая Кафедра</label>
+        <div class="col-md-4">
+            @{
+                var basedepartmentList = Model.BaseDepartments.Select(d => new
+                {
+                    Text = d.FullName,
+                    Value = d.Id
+                });
+            }
+            @Html.DropDownListFor(x => x.BaseDepartmentId, new SelectList(basedepartmentList, "Value", "Text", Model.BaseDepartmentId), new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">

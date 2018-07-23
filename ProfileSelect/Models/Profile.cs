@@ -11,6 +11,7 @@ namespace ProfileSelect.Models
         public string Name { get; set; }
         public virtual Direction Direction { get; set; }
         public virtual Department Department { get; set; }
+        public virtual Department BaseDepartment { get; set; }
         public bool IsDeleted { get; set; }
         public virtual ICollection<ApplicationUser> Students { get; set; }
     }

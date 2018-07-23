@@ -10,17 +10,21 @@
     </div>
 }
 
-<div class="row margin-bottom-10">
-    <div class="col-md-2">
-        <a href="@Url.Action("Add", "Student", new {Area = "Admin"})" class="btn btn-primary pull-left">Добавить студента</a>
+    <div class="row margin-bottom-10">
+        <div class="col-md-2">
+            <a href="@Url.Action("Add", "Student", new {Area = "Admin"})" class="btn btn-primary pull-left">Добавить студента</a>
+        </div>
+        <div class="col-md-2">
+            <input type="radio" name="score" value="Пересчет баллов">
+            <input type="radio" name="score" value="Средний балл">
+        </div>
+        <div class="col-md-2">
+            <a href="@Url.Action("FillGroups", "Home", new {Area = "Admin"})" class="btn btn-primary pull-left">Распределить по группам</a>
+        </div>
+        <div class="col-md-2">
+            <a href="@Url.Action("ConfirmUserGroups", "Home", new {Area="Admin"})" class="btn btn-primary pull-left">Утвердить группы</a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <a href="@Url.Action("FillGroups", "Home", new {Area = "Admin"})" class="btn btn-primary pull-left">Распределить по группам</a>
-    </div>
-    <div class="col-md-2">
-        <a href="@Url.Action("ConfirmUserGroups", "Home", new {Area="Admin"})" class="btn btn-primary pull-left">Утвердить группы</a>
-    </div>
-</div>
 <table id="students-table" class="table table-bordered">
     <thead>
         <tr>
@@ -28,6 +32,7 @@
             <th>Фамилия</th>
             <th>Отчество</th>
             <th>Баллы</th>
+            <th>Ср. балл</th>
             <th>Номер</th>
             <th>Активен?</th>
             <th>Статус</th>
@@ -51,6 +56,7 @@
             <td>@s.LastName</td>
             <td>@s.Patronymic</td>
             <td>@s.AverageScore</td>
+            <td>@s.Score</td>
             <td>@s.Number</td>
             <td>@(s.IsActive ? "Да" : "Нет")</td>
             <td>@s.StatusName</td>
@@ -104,11 +110,11 @@
                 },
                 {
                     targets: [5],
-                    responsivePriority: 1
+                    responsivePriority: 2
                 },
                 {
                     targets: [6],
-                    responsivePriority: 1
+                    responsivePriority: 2
                 },
                 {
                     targets: [7],
@@ -116,7 +122,7 @@
                 },
                 {
                     targets: [8],
-                    responsivePriority: 1
+                    responsivePriority: 2
                 },
                 {
                     targets: [9],
@@ -128,11 +134,11 @@
                 },
                 {
                     targets: [11],
-                    responsivePriority: 1
+                    responsivePriority: 2
                 },
                 {
                     targets: [12],
-                    responsivePriority: 1
+                    responsivePriority: 2
                 },
                 {
                     targets: [13],
@@ -148,6 +154,10 @@
                 },
                 {
                     targets: [16],
+                    responsivePriority: 3
+                },
+                {
+                    targets: [17],
                     responsivePriority: 3
                 }
             ]

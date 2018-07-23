@@ -31,6 +31,7 @@ namespace ProfileSelect.ViewModels
         public DateTime CreateDate { get; set; }
         public DateTime? ValidUntil { get; set; }
         public float AverageScore { get; set; }
+        public float Score { get; set; }
         public int ClaimNumber { get; set; }
         public List<StatusViewModel> Statuses { get; set; }
         public List<DirectionViewModel> Directions { get; set; }

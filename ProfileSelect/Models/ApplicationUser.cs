@@ -32,6 +32,7 @@ namespace ProfileSelect.Models
         public DateTime CreateDate { get; set; }
         public DateTime? ValidUntil { get; set; }
         public float AverageScore { get; set; }
+        public float Score { get; set; }
         public int ClaimNumber { get; set; }
         public virtual ICollection<ProfilePriority> ProfilePrioritys { get; set; }
         public virtual ICollection<BlockPriority> BlockPrioritys { get; set; }
