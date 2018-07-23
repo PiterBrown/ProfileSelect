@@ -42,8 +42,8 @@
             @{
                 var basedepartmentList = Model.Departments.Select(d => new
                 {
-                    Text = (d.FullName==null?"":d.FullName),
-                    Value = (d.Id==0?0:d.Id)
+                    Text = d.FullName,
+                    Value = d.Id
                 });
             }
             @Html.DropDownListFor(x => x.BaseDepartmentId, new SelectList(basedepartmentList, "Value", "Text", Model.DepartmentId), new { @class = "form-control" })
