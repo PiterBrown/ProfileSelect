@@ -11,156 +11,166 @@
 }
 
     <div class="row margin-bottom-10">
-        <div class="col-md-2">
-            <a href="@Url.Action("Add", "Student", new {Area = "Admin"})" class="btn btn-primary pull-left">Добавить студента</a>
-        </div>
-        <div class="col-md-2">
-            <input type="radio" name="score" value="Пересчет баллов">
-            <input type="radio" name="score" value="Средний балл">
+        
+            <div class="col-md-2">
+                <a href="@Url.Action("Add", "Student", new {Area = "Admin"})" class="btn btn-primary pull-left">Добавить студента</a>
+            </div>
+            @using (Html.BeginForm("FillGroups", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+                {
+            <div class="col-md-3 col-md-offset-1">
+                <input type="submit" value="Распределить по группам" class="btn btn-primary pull-left" /><br /><br />
+                <input type="radio" name="score" value="Пересчет баллов" checked="checked">Пересчет баллов<br />
+                <input type="radio" name="score" value="Средний балл">Средний балл
+            </div>
+                }
+            @*<div class="col-md-2">
+            <input type="radio" name="score" value="Пересчет баллов" checked="checked">Пересчет баллов
+            <input type="radio" name="score" value="Средний балл">Средний балл
         </div>
         <div class="col-md-2">
             <a href="@Url.Action("FillGroups", "Home", new {Area = "Admin"})" class="btn btn-primary pull-left">Распределить по группам</a>
+        </div>*@
+            <div class="col-md-2 col-md-offset-1">
+                <a href="@Url.Action("ConfirmUserGroups", "Home", new {Area="Admin"})" class="btn btn-primary pull-left">Утвердить группы</a>
+            </div>
         </div>
-        <div class="col-md-2">
-            <a href="@Url.Action("ConfirmUserGroups", "Home", new {Area="Admin"})" class="btn btn-primary pull-left">Утвердить группы</a>
-        </div>
-    </div>
-<table id="students-table" class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Отчество</th>
-            <th>Баллы</th>
-            <th>Ср. балл</th>
-            <th>Номер</th>
-            <th>Активен?</th>
-            <th>Статус</th>
-            <th>Комментарии статуса</th>
-            <th>Текущая группа</th>
-            <th>Предварительная группа</th>
-            <th>Новая группа</th>
-            <th>Специализация</th>
-            <th>Направление специализации</th>
-            <th>Логин</th>
-            <th>Пароль</th>
-            <th>Пароль действителен до</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var s in Model)
-        {
-        <tr>
-            <td>@s.FirstName</td>
-            <td>@s.LastName</td>
-            <td>@s.Patronymic</td>
-            <td>@s.AverageScore</td>
-            <td>@s.Score</td>
-            <td>@s.Number</td>
-            <td>@(s.IsActive ? "Да" : "Нет")</td>
-            <td>@s.StatusName</td>
-            <td>@s.StatusComm</td>
-            <td>@s.CurrentGroupName</td>
-            <td>@s.PreviewGroupName</td>
-            <td>@s.NewGroupName</td>
-            <td>@s.DirectionName</td>
-            <td>@s.NewProfileName</td>
-            <td>@s.UserName</td>
-            <td>@s.Password</td>
-            <td>@(s.ValidUntil?.ToString("f") ?? "")</td>
-            <td>
-                <div id="navigation">
-                    <ul>
-                        <li><a href="@Url.Action("Edit", "Student", new {Area = "Admin", s.Id})">Редактировать</a></li>
-                        <li><a href="@Url.Action("Delete", "Student", new {Area = "Admin", s.Id})">Удалить</a></li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
+       
+        <table id="students-table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Отчество</th>
+                    <th>Баллы</th>
+                    <th>Ср. балл</th>
+                    <th>Номер</th>
+                    <th>Активен?</th>
+                    <th>Статус</th>
+                    <th>Комментарии статуса</th>
+                    <th>Текущая группа</th>
+                    <th>Предварительная группа</th>
+                    <th>Новая группа</th>
+                    <th>Специализация</th>
+                    <th>Направление специализации</th>
+                    <th>Логин</th>
+                    <th>Пароль</th>
+                    <th>Пароль действителен до</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.FirstName</td>
+                    <td>@s.LastName</td>
+                    <td>@s.Patronymic</td>
+                    <td>@s.AverageScore</td>
+                    <td>@s.Score</td>
+                    <td>@s.Number</td>
+                    <td>@(s.IsActive ? "Да" : "Нет")</td>
+                    <td>@s.StatusName</td>
+                    <td>@s.StatusComm</td>
+                    <td>@s.CurrentGroupName</td>
+                    <td>@s.PreviewGroupName</td>
+                    <td>@s.NewGroupName</td>
+                    <td>@s.DirectionName</td>
+                    <td>@s.NewProfileName</td>
+                    <td>@s.UserName</td>
+                    <td>@s.Password</td>
+                    <td>@(s.ValidUntil?.ToString("f") ?? "")</td>
+                    <td>
+                        <div id="navigation">
+                            <ul>
+                                <li><a href="@Url.Action("Edit", "Student", new {Area = "Admin", s.Id})">Редактировать</a></li>
+                                <li><a href="@Url.Action("Delete", "Student", new {Area = "Admin", s.Id})">Удалить</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
         }
-    </tbody>
-</table>
+            </tbody>
+        </table>
 
-@section scripts{
-    <script type="text/javascript">
-        $('#students-table').DataTable({
-            language: rus_lang,
-            responsive: true,
-            columnDefs: [
-                {
-                    targets: [0],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [1],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [2],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [3],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [4],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [5],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [6],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [7],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [8],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [9],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [10],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [11],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [12],
-                    responsivePriority: 2
-                },
-                {
-                    targets: [13],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [14],
-                    responsivePriority: 3
-                },
-                {
-                    targets: [15],
-                    responsivePriority: 3
-                },
-                {
-                    targets: [16],
-                    responsivePriority: 3
-                },
-                {
-                    targets: [17],
-                    responsivePriority: 3
-                }
-            ]
-        });
-    </script>
-}
+        @section scripts{
+            <script type="text/javascript">
+                $('#students-table').DataTable({
+                    language: rus_lang,
+                    responsive: true,
+                    columnDefs: [
+                        {
+                            targets: [0],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [1],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [2],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [3],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [4],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [5],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [6],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [7],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [8],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [9],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [10],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [11],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [12],
+                            responsivePriority: 2
+                        },
+                        {
+                            targets: [13],
+                            responsivePriority: 1
+                        },
+                        {
+                            targets: [14],
+                            responsivePriority: 3
+                        },
+                        {
+                            targets: [15],
+                            responsivePriority: 3
+                        },
+                        {
+                            targets: [16],
+                            responsivePriority: 3
+                        },
+                        {
+                            targets: [17],
+                            responsivePriority: 3
+                        }
+                    ]
+                });
+            </script>
+        }

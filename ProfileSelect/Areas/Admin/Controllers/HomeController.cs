@@ -77,6 +77,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     DirectionName = s.Direction.Name,
                     NewProfileName = s.NewProfile.Name,
                     AverageScore = s.AverageScore,
+                    Score=s.Score
                 }).ToList();
 
                 return View(students);
@@ -122,6 +123,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Id = p.Id,
                     Name = p.Name,
                     DepartmentName = p.Department.FullName,
+                    BaseDepartmentName=p.BaseDepartment.FullName,
                     DirectionName = p.Direction.Name
                 }).ToList();
                 return View(profiles);
@@ -182,7 +184,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 {
                     var usersWorksheet = excelPackage.Workbook.Worksheets.First();
                     var rowsCount = usersWorksheet.Dimension.End.Row;
-                    for (int r = 2; r < rowsCount; r++)
+                    for (int r = 2; r <= rowsCount; r++)
                     {
                         var фамиилия = usersWorksheet.Cells[r, 2].Text;
                         if (string.IsNullOrEmpty(фамиилия))
@@ -839,6 +841,9 @@ namespace ProfileSelect.Areas.Admin.Controllers
 
                     }
                     worksheet.Cells[1, 8].Value = "Полное название кафедры";
+                    worksheet.Cells[1, 9].Value = "Переведенный балл";
+                    worksheet.Cells[1, 10].Value = "Средний балл";
+
 
                     var i = 2;
                     foreach (var student in students)
@@ -864,6 +869,8 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             worksheet.Cells[i, 7].Value = student.NewGroup.Name;
                             worksheet.Cells[i, 8].Value = student.NewGroup.Department.FullName;
                         }
+                        worksheet.Cells[i, 9].Value = student.AverageScore;
+                        worksheet.Cells[i, 10].Value = student.Score;
                         i++;
                     }
 
@@ -874,8 +881,8 @@ namespace ProfileSelect.Areas.Admin.Controllers
         }
 
 
-
-        public ActionResult FillGroups()
+        [HttpPost]
+        public ActionResult FillGroups(string scoreMethod)
         {
             using (var dbContext = new ApplicationDbContext())
             {
@@ -926,7 +933,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         foreach (var otherStudentsProfilePriority in otherStudentsProfilePrioritys.Where(o => o.Key != 0))
                         {
                             var orderedOtherStudentsProfilePriority =
-                                otherStudentsProfilePriority.OrderByDescending(o => o.Student.AverageScore);
+                                otherStudentsProfilePriority.Where(s=>s.Student.NewProfile==null).OrderByDescending(o => o.Student.AverageScore);
+                            if (scoreMethod=="Средний балл")
+                            {
+                                orderedOtherStudentsProfilePriority =
+                                otherStudentsProfilePriority.Where(s => s.Student.NewProfile == null).OrderByDescending(o => o.Student.Score);
+                            }
 
                             foreach (var profilePriority in orderedOtherStudentsProfilePriority)
                             {
@@ -954,7 +966,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         foreach (var otherStudentsProfilePriority in otherStudentsProfilePrioritys.Where(o => o.Key == 0))
                         {
                             var orderedOtherStudentsProfilePriority =
-                            otherStudentsProfilePriority.OrderByDescending(o => o.Student.AverageScore);
+                            otherStudentsProfilePriority.Where(s => s.Student.NewProfile == null).OrderByDescending(o => o.Student.AverageScore);
+                            if (scoreMethod == "Средний балл")
+                            {
+                                orderedOtherStudentsProfilePriority =
+                                otherStudentsProfilePriority.Where(s => s.Student.NewProfile == null).OrderByDescending(o => o.Student.Score);
+                            }
 
                             foreach (var prof in Profiles.OrderBy(o=>o.Students.Count))
                             {
