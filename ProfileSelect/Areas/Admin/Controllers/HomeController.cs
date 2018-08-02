@@ -917,8 +917,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 student.PreviewGroup = student.CurrentGroup;
                                 student.Direction = student.CurrentGroup.Direction;
                                 student.NewProfile = dbContext.Profiles.FirstOrDefault(p=>p.Direction.Id==student.CurrentGroup.Direction.Id && 
-                                                                                          (p.Department.Id==student.CurrentGroup.Department.Id ||
-                                                                                          p.BaseDepartment.Id==student.CurrentGroup.Department.Id));
+                                                                                          (p.BaseDepartment != null ? p.BaseDepartment.Id==student.CurrentGroup.Department.Id : p.Department.Id == student.CurrentGroup.Department.Id));
                             }
                         }
                         dbContext.SaveChanges();
@@ -947,7 +946,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 var ProfileGroups = Groups.Where(g => 
                                                                       g.Direction.Id == profile.Direction.Id &&
                                                                       (g.Department.Id == profile.Department.Id ||
-                                                                      g.Department.Id == profile.BaseDepartment.Id)).ToList();
+                                                                       profile.BaseDepartment != null ? profile.BaseDepartment.Id == student.CurrentGroup.Department.Id : profile.Department.Id == student.CurrentGroup.Department.Id)).ToList();
                                 var ProfileCount = 0;
                                 foreach (var pc in ProfileGroups)
                                 {

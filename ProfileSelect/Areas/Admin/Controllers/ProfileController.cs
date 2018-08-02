@@ -76,6 +76,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Name = profile.Name,
                     DepartmentId = profile.Department.Id,
                     DirectionId = profile.Direction.Id,
+                    BaseDepartmentId = profile.BaseDepartment?.Id,
                     Directions = directions,
                     Departments = departments
                 });
@@ -93,11 +94,13 @@ namespace ProfileSelect.Areas.Admin.Controllers
             {
                 var direction = dbCotext.Directions.Where(d => !d.IsDeleted).First(d => d.Id == profileViewModel.DirectionId);
                 var department = dbCotext.Departments.Where(d => !d.IsDeleted).First(d => d.Id == profileViewModel.DepartmentId);
+                var baseDepartment = dbCotext.Departments.Where(d => !d.IsDeleted).First(d => d.Id == profileViewModel.BaseDepartmentId);
 
                 var profile = dbCotext.Profiles.First(p => p.Id == profileViewModel.Id);
                 profile.Name = profileViewModel.Name;
                 profile.Direction = direction;
                 profile.Department = department;
+                profile.BaseDepartment = baseDepartment;
 
                 dbCotext.SaveChanges();
                 return RedirectToAction("Profiles", "Home", new { Area = "Admin" });

@@ -280,9 +280,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201807191829333_Initial.cs" />
-    <Compile Include="Migrations\201807191829333_Initial.Designer.cs">
-      <DependentUpon>201807191829333_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201808011014540_Initial.cs" />
+    <Compile Include="Migrations\201808011014540_Initial.Designer.cs">
+      <DependentUpon>201808011014540_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
@@ -717,8 +717,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201807191829333_Initial.resx">
-      <DependentUpon>201807191829333_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201808011014540_Initial.resx">
+      <DependentUpon>201808011014540_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

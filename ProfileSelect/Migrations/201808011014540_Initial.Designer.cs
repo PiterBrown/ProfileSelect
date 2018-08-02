@@ -13,7 +13,7 @@ namespace ProfileSelect.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201807191829333_Initial"; }
+            get { return "201808011014540_Initial"; }
         }
         
         string IMigrationMetadata.Source
