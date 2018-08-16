@@ -903,13 +903,13 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         var specialStudents = dbContext.Users.Where(d => !d.IsDeleted).Where(s => specialStudentsStatuses.Contains(s.Status.Id)).ToList();
                         var Profiles = dbContext.Profiles.Where(p => !p.IsDeleted).OrderBy(o => o.Id).ToList();
                         var Groups = dbContext.Groups.ToList();
-                        foreach (var p in Profiles)
-                        {
-                            if (p.BaseDepartment==null)
-                            {
-                                p.BaseDepartment = new Department() {Id=0};
-                            }
-                        }
+                        //foreach (var p in Profiles)
+                        //{
+                        //    if (p.BaseDepartment==null)
+                        //    {
+                        //        p.BaseDepartment = new Department() {Id=0};
+                        //    }
+                        //}
                         foreach (var student in specialStudents)
                         {
                             if(student.ProfilePrioritys.Any())
@@ -979,9 +979,9 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                     var student = profilePriority.Student;
                                     var profile = profilePriority.Profile;
                                     var ProfileGroups = Groups.Where(g => 
-                                                                          g.Direction.Id == profile.Direction.Id && 
-                                                                          (g.Department.Id == profile.Department.Id ||
-                                                                          g.Department.Id==profile.BaseDepartment.Id)).ToList();
+                                                                          g.Direction.Id == profile.Direction.Id &&
+                                                                           (g.Department.Id == profile.Department.Id ||
+                                                                       profile.BaseDepartment != null ? profile.BaseDepartment.Id == student.CurrentGroup.Department.Id : profile.Department.Id == student.CurrentGroup.Department.Id)).ToList();
                                     var ProfileCount = 0;
                                     foreach (var pc in ProfileGroups)
                                     {
@@ -1002,7 +1002,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         {
                             var currentStudents = allStudents.Where(s => s.NewProfileId == currentProfile.Id && s.PreviewGroup == null).ToList();
                             var group = Groups.Where(g => (g.Department.Id == currentProfile.Department.Id ||
-                                                          g.Department.Id==currentProfile.BaseDepartment.Id) &&
+                                                          currentProfile.BaseDepartment != null ? currentProfile.BaseDepartment.Id == g.Department.Id : currentProfile.Department.Id == g.Department.Id) &&
                                                           g.Direction.Id == currentProfile.Direction.Id).ToList();
                            
                                 foreach (var currentgroup in group)
