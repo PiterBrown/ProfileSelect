@@ -903,8 +903,8 @@ namespace ProfileSelect.Areas.Admin.Controllers
 
                         var specialStudentsStatuses = dbContext.Statuses.Where(s => s.Name == "МО" || s.Name == "Целевой" || s.Name == "Не беспокоить").Select(s => s.Id).ToList();
                         var specialStudents = dbContext.Users.Where(d => !d.IsDeleted).Where(s => specialStudentsStatuses.Contains(s.Status.Id)).ToList();
-                        var Profiles = dbContext.Profiles.Where(p => !p.IsDeleted).OrderBy(o => o.Id).ToList();
-                        var Groups = dbContext.Groups.ToList();
+                        var profiles = dbContext.Profiles.Where(p => !p.IsDeleted).OrderBy(o => o.Id).ToList();
+                        var groups = dbContext.Groups.ToList();
                         //foreach (var p in Profiles)
                         //{
                         //    if (p.BaseDepartment==null)
@@ -925,7 +925,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         dbContext.SaveChanges();
 
                         var otherStudentsProfilePrioritys = dbContext.ProfilePrioritys
-                            .Where(u => u.Student.IsActive && !u.Student.IsDeleted&& u.Student.Status.Name=="Обычный")
+                            .Where(u => u.Student.IsActive && !u.Student.IsDeleted && u.Student.Status.Name == "Обычный")
                             .GroupBy(pp => pp.Priority)
                             .OrderBy(pp => pp.Key).ToList();
                         var users = dbContext.Users.Where(u => u.IsActive && !u.IsDeleted);
@@ -945,17 +945,21 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             {
                                 var student = profilePriority.Student;
                                 var profile = profilePriority.Profile;
-                                var ProfileGroups = Groups.Where(g => 
-                                                                      g.Direction.Id == profile.Direction.Id &&
-                                                                      (g.Department.Id == profile.Department.Id ||
-                                                                       profile.BaseDepartment != null ? profile.BaseDepartment.Id == student.CurrentGroup.Department.Id : profile.Department.Id == student.CurrentGroup.Department.Id)).ToList();
-                                var ProfileCount = 0;
-                                foreach (var pc in ProfileGroups)
+                                var profileGroups = groups.Where(g => g.Direction.Id == profile.Direction.Id && g.Department.Id == profile.Department.Id).ToList();
+                                if (profile.BaseDepartment != null)
                                 {
-                                    ProfileCount = ProfileCount + pc.Count;
+                                    var additonalGroups = groups.Where(g => g.Direction.Id == profile.Direction.Id && g.Department.Id == profile.BaseDepartment.Id);
+                                    profileGroups.AddRange(additonalGroups);
+                                    profileGroups = profileGroups.Distinct().ToList();
+                                }
+
+                                var profileCount = 0;
+                                foreach (var pc in profileGroups)
+                                {
+                                    profileCount = profileCount + pc.Count;
                                 }
                                 var usersCount = users.Where(u =>u.NewProfileId == profile.Id).ToList();
-                                var profCount = ProfileCount - usersCount.Count;//users.Where(u => u.NewProfileId.Value == profile.Id).Count();
+                                var profCount = profileCount - usersCount.Count;//users.Where(u => u.NewProfileId.Value == profile.Id).Count();
                                 if (profCount != 0)
                                 {
                                     student.NewProfile = profile;
@@ -974,23 +978,26 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 otherStudentsProfilePriority.Where(s => s.Student.NewProfile == null).OrderByDescending(o => o.Student.Score);
                             }
 
-                            foreach (var prof in Profiles.OrderBy(o=>o.Students.Count))
+                            foreach (var prof in profiles.OrderBy(o=>o.Students.Count))
                             {
                                 foreach (var profilePriority in orderedOtherStudentsProfilePriority.Where(p =>p.Profile.Id==prof.Id && p.Student.NewProfileId==null))
                                 {
                                     var student = profilePriority.Student;
                                     var profile = profilePriority.Profile;
-                                    var ProfileGroups = Groups.Where(g => 
-                                                                          g.Direction.Id == profile.Direction.Id &&
-                                                                           (g.Department.Id == profile.Department.Id ||
-                                                                       profile.BaseDepartment != null ? profile.BaseDepartment.Id == student.CurrentGroup.Department.Id : profile.Department.Id == student.CurrentGroup.Department.Id)).ToList();
-                                    var ProfileCount = 0;
-                                    foreach (var pc in ProfileGroups)
+                                    var profileGroups = groups.Where(g => g.Direction.Id == profile.Direction.Id && g.Department.Id == profile.Department.Id).ToList();
+                                    if (profile.BaseDepartment != null)
                                     {
-                                        ProfileCount = ProfileCount + pc.Count;
+                                        var additonalGroups = groups.Where(g => g.Direction.Id == profile.Direction.Id && g.Department.Id == profile.BaseDepartment.Id);
+                                        profileGroups.AddRange(additonalGroups);
+                                        profileGroups = profileGroups.Distinct().ToList();
                                     }
-                                    var usersCount = users.Where(u => u.NewProfileId == profile.Id).Count();
-                                    var profCount = ProfileCount - usersCount;
+                                    var profileCount = 0;
+                                    foreach (var pc in profileGroups)
+                                    {
+                                        profileCount = profileCount + pc.Count;
+                                    }
+                                    var usersCount = users.Count(u => u.NewProfileId == profile.Id);
+                                    var profCount = profileCount - usersCount;
                                     if (profCount != 0)
                                     {
                                         student.NewProfile = profile;
@@ -1000,43 +1007,47 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             }
                         }
 
-                        foreach (var currentProfile in Profiles.Where(p => p.Students.Count != 0))
+                        foreach (var currentProfile in profiles.Where(p => p.Students.Count != 0))
                         {
                             var currentStudents = allStudents.Where(s => s.NewProfileId == currentProfile.Id && s.PreviewGroup == null).ToList();
-                            var group = Groups.Where(g => (g.Department.Id == currentProfile.Department.Id ||
-                                                          currentProfile.BaseDepartment != null ? currentProfile.BaseDepartment.Id == g.Department.Id : currentProfile.Department.Id == g.Department.Id) &&
-                                                          g.Direction.Id == currentProfile.Direction.Id).ToList();
-                           
-                                foreach (var currentgroup in group)
+                            var group = groups.Where(g => g.Direction.Id == currentProfile.Direction.Id && g.Department.Id == currentProfile.Department.Id).ToList();
+                            if (currentProfile.BaseDepartment != null)
+                            {
+                                var additonalGroups = groups.Where(g => g.Direction.Id == currentProfile.Direction.Id && g.Department.Id == currentProfile.BaseDepartment.Id);
+                                group.AddRange(additonalGroups);
+                                group = group.Distinct().ToList();
+                            }
+
+                            foreach (var currentgroup in group)
+                            {
+                                do
                                 {
-                                    do
+                                    try
                                     {
-                                        try
+                                        currentStudents = currentStudents.Where(c => c.PreviewGroup == null).ToList();
+                                        for (int i = 0; i <= currentStudents.Count(); i = i + group.Count)
                                         {
-                                            currentStudents = currentStudents.Where(c => c.PreviewGroup == null).ToList();
-                                            for (int i = 0; i <= currentStudents.Count(); i = i + group.Count)
+                                            if (currentgroup.Count != currentgroup.PreviewGroupStudents.Count)
                                             {
-                                                if (currentgroup.Count != currentgroup.PreviewGroupStudents.Count)
-                                                {
-                                                    currentStudents.ElementAt(i).PreviewGroup = currentgroup;
-                                                    dbContext.SaveChanges();
-                                                }
-                                                else
-                                                { break; }
-
+                                                currentStudents.ElementAt(i).PreviewGroup = currentgroup;
+                                                dbContext.SaveChanges();
                                             }
-                                            
+                                            else
+                                            {
+                                                break;
+                                            }
                                         }
-                                        catch (Exception )
+                                    }
+                                    catch (Exception )
+                                    {
+                                        if (currentStudents.Count == 0)
                                         {
-                                        if (currentStudents.Count==0)
-                                        { break; }
-                                                                                
+                                            break;
                                         }
+                                    }
 
-                                    } while (currentgroup.Count != currentgroup.PreviewGroupStudents.Count);
-                                }
-
+                                } while (currentgroup.Count != currentgroup.PreviewGroupStudents.Count);
+                            }
                         }
                         dbContextTransaction.Commit();
                         dbContext.SaveChanges();
