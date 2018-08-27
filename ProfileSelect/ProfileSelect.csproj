@@ -565,6 +565,7 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\Admin\Data\Шаблон приоритетов импорт.xlsm" />
     <Content Include="Areas\Admin\Data\Шаблон среднего балла.xlsm" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
@@ -703,7 +704,6 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Student\Models\" />
-    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

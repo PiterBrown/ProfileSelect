@@ -487,7 +487,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         var rowsCount = usersWorksheet.Dimension.End.Row;
                         int c = 3;
                         var columnCount = 0;
-                        string[] columnName = new string[30];
+                        string[] columnName = new string[50];
                         while (usersWorksheet.Cells[6, c].Text!="Всего оценок") {
                             columnName[columnCount] = usersWorksheet.Cells[7, c].Text;
                             columnCount++;
