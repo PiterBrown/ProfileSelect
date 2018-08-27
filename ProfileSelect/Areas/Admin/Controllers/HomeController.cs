@@ -77,7 +77,9 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     DirectionName = s.Direction.Name,
                     NewProfileName = s.NewProfile.Name,
                     AverageScore = s.AverageScore,
-                    Score=s.Score
+                    Score=s.Score,
+                    IsBusy = s.IsBusy,
+                    BusyReason = s.BusyReason
                 }).ToList();
 
                 return View(students);

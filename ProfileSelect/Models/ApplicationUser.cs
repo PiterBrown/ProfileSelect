@@ -20,6 +20,8 @@ namespace ProfileSelect.Models
         public string Number { get; set; }
         public bool IsActive { get; set; }
         public string StatusComm { get; set; }
+        public bool IsBusy { get; set; }
+        public string BusyReason { get; set; }
         public virtual Status Status { get; set; }
         public virtual Group CurrentGroup { get; set; }
         public virtual Group PreviewGroup { get; set; }

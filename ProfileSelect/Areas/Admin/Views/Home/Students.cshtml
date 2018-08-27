@@ -41,6 +41,7 @@
                     <th>Имя</th>
                     <th>Фамилия</th>
                     <th>Отчество</th>
+                    <th>Состояние</th>
                     <th>Баллы</th>
                     <th>Ср. балл</th>
                     <th>Номер</th>
@@ -60,35 +61,45 @@
             </thead>
             <tbody>
                 @foreach (var s in Model)
-            {
-                <tr>
-                    <td>@s.FirstName</td>
-                    <td>@s.LastName</td>
-                    <td>@s.Patronymic</td>
-                    <td>@s.AverageScore</td>
-                    <td>@s.Score</td>
-                    <td>@s.Number</td>
-                    <td>@(s.IsActive ? "Да" : "Нет")</td>
-                    <td>@s.StatusName</td>
-                    <td>@s.StatusComm</td>
-                    <td>@s.CurrentGroupName</td>
-                    <td>@s.PreviewGroupName</td>
-                    <td>@s.NewGroupName</td>
-                    <td>@s.DirectionName</td>
-                    <td>@s.NewProfileName</td>
-                    <td>@s.UserName</td>
-                    <td>@s.Password</td>
-                    <td>@(s.ValidUntil?.ToString("f") ?? "")</td>
-                    <td>
-                        <div id="navigation">
-                            <ul>
-                                <li><a href="@Url.Action("Edit", "Student", new {Area = "Admin", s.Id})">Редактировать</a></li>
-                                <li><a href="@Url.Action("Delete", "Student", new {Area = "Admin", s.Id})">Удалить</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-        }
+                {
+                    <tr>
+                        <td>@s.FirstName</td>
+                        <td>@s.LastName</td>
+                        <td>@s.Patronymic</td>
+                        <td>
+                            <div class="form-horizontal" style="margin-left: 10px;">
+                                <div class="form-group">
+                                    <input type="checkbox" class="is-bisy-chk" @(s.IsBusy ? "checked=''" : "") data-id="@s.Id"/>Не беспокоить
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="bisy-txt form-control" rows="1" data-id="@s.Id" placeholder="Причина статуса">@s.BusyReason</textarea>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@s.AverageScore</td>
+                        <td>@s.Score</td>
+                        <td>@s.Number</td>
+                        <td>@(s.IsActive ? "Да" : "Нет")</td>
+                        <td>@s.StatusName</td>
+                        <td>@s.StatusComm</td>
+                        <td>@s.CurrentGroupName</td>
+                        <td>@s.PreviewGroupName</td>
+                        <td>@s.NewGroupName</td>
+                        <td>@s.DirectionName</td>
+                        <td>@s.NewProfileName</td>
+                        <td>@s.UserName</td>
+                        <td>@s.Password</td>
+                        <td>@(s.ValidUntil?.ToString("f") ?? "")</td>
+                        <td>
+                            <div id="navigation">
+                                <ul>
+                                    <li><a href="@Url.Action("Edit", "Student", new {Area = "Admin", s.Id})">Редактировать</a></li>
+                                    <li><a href="@Url.Action("Delete", "Student", new {Area = "Admin", s.Id})">Удалить</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
 
@@ -171,6 +182,36 @@
                             responsivePriority: 3
                         }
                     ]
+                });
+                $('.is-bisy-chk').change(function () {
+                  $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetIsBusy", "Student", new {Area="Admin"})',
+                    data: JSON.stringify({
+                      id: $(this).data('id'),
+                      isBusy: $(this).is(':checked')
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                      toastr.info(response.Message);
+                    }
+                  });
+                });
+                $('.bisy-txt').change(function() {
+                  $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetIsBusyText", "Student", new {Area="Admin"})',
+                    data: JSON.stringify({
+                      id: $(this).data('id'),
+                      text: $(this).val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                      toastr.info(response.Message);
+                    }
+                  });
                 });
             </script>
         }

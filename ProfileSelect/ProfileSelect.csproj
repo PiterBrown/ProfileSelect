@@ -284,6 +284,10 @@
     <Compile Include="Migrations\201808011014540_Initial.Designer.cs">
       <DependentUpon>201808011014540_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808271853166_Bugfix1.cs" />
+    <Compile Include="Migrations\201808271853166_Bugfix1.Designer.cs">
+      <DependentUpon>201808271853166_Bugfix1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -499,6 +503,8 @@
     <Content Include="Content\Selectize\js\selectize.min.js" />
     <Content Include="Content\Selectize\js\standalone\selectize.js" />
     <Content Include="Content\Selectize\js\standalone\selectize.min.js" />
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -565,6 +571,8 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\Admin\Data\Шаблон приоритетов импорт.xlsm" />
     <Content Include="Areas\Admin\Data\Шаблон среднего балла.xlsm" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -662,6 +670,8 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -719,6 +729,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201808011014540_Initial.resx">
       <DependentUpon>201808011014540_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808271853166_Bugfix1.resx">
+      <DependentUpon>201808271853166_Bugfix1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

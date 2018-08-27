@@ -33,6 +33,8 @@ namespace ProfileSelect.ViewModels
         public float AverageScore { get; set; }
         public float Score { get; set; }
         public int ClaimNumber { get; set; }
+        public bool IsBusy { get; set; }
+        public string BusyReason { get; set; }
         public List<StatusViewModel> Statuses { get; set; }
         public List<DirectionViewModel> Directions { get; set; }
         public List<GroupViewModel> Groups { get; set; }

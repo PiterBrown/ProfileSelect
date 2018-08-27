@@ -38,9 +38,13 @@ namespace ProfileSelect
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
+                "~/Scripts/toastr.js"));
+
             bundles.Add(new StyleBundle("~/styles/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/bootstrap.theme.css",
+                      "~/Content/toastr.css",
                       "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/styles/datepicker").Include(

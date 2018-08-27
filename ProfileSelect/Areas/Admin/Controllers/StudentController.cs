@@ -203,5 +203,40 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 return RedirectToAction("Students", "Home", new { Area = "Admin" });
             }
         }
+
+        [HttpPost]
+        public JsonResult SetIsBusy(string id, bool isBusy)
+        {
+            using (var dbCotext = new ApplicationDbContext())
+            {
+                var student = dbCotext.Users.First(s => s.Id == id);
+                student.IsBusy = isBusy;
+                dbCotext.SaveChanges();
+
+                var message = string.Format("Статус {0} для {1} {2} {3} сохранен", isBusy ? "Не беспокоить" : "Свободен",
+                    student.LastName, student.FirstName, student.Patronymic);
+                return Json(new
+                {
+                    Message = message
+                });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SetIsBusyText(string id, string text)
+        {
+            using (var dbCotext = new ApplicationDbContext())
+            {
+                var student = dbCotext.Users.First(s => s.Id == id);
+                student.BusyReason = text;
+                dbCotext.SaveChanges();
+
+                var message = string.Format("Текст причины статуса для {0} {1} {2} сохранен", student.LastName, student.FirstName, student.Patronymic);
+                return Json(new
+                {
+                    Message = message
+                });
+            }
+        }
     }
 }
