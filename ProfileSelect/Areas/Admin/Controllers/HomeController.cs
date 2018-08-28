@@ -188,39 +188,26 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     var rowsCount = usersWorksheet.Dimension.End.Row;
                     for (int r = 2; r <= rowsCount; r++)
                     {
-                        var фамиилия = usersWorksheet.Cells[r, 2].Text;
+                        var фамиилия = usersWorksheet.Cells[r, 1].Text;
                         if (string.IsNullOrEmpty(фамиилия))
                         {
                             break;
                         }
-                        if(r == 514)
-                        {
-                            фамиилия = usersWorksheet.Cells[r, 2].Text;
-                        }
+                        //if (r == 514)
+                        //{
+                        //    фамиилия = usersWorksheet.Cells[r, 2].Text;
+                        //}
 
-                        var имя = usersWorksheet.Cells[r, 3].Text;
-                        var отчество = usersWorksheet.Cells[r, 4].Text;
-                        var номерБилета = usersWorksheet.Cells[r, 5].Text;
-                        var группа = usersWorksheet.Cells[r, 6].Text;
-                        var целевик = usersWorksheet.Cells[r, 7].Text;
-                        var отчислен = usersWorksheet.Cells[r, 8].Text;
-                        var ИППО = usersWorksheet.Cells[r, 9].Text;
-                        var ВТ = usersWorksheet.Cells[r, 10].Text;
-                        var ПИ = usersWorksheet.Cells[r, 11].Text;
-                        var МОСИТ = usersWorksheet.Cells[r, 12].Text;
-                        var КИС = usersWorksheet.Cells[r, 13].Text;
-                        var ПМ = usersWorksheet.Cells[r, 14].Text;
-                        var ППИ = usersWorksheet.Cells[r, 15].Text;
-                        var БК239 = usersWorksheet.Cells[r, 16].Text;
-                        var БК244 = usersWorksheet.Cells[r, 17].Text;
-                        var БК248 = usersWorksheet.Cells[r, 18].Text;
-                        var БК250 = usersWorksheet.Cells[r, 19].Text;
-                        var БК254 = usersWorksheet.Cells[r, 20].Text;
-                        var БК256 = usersWorksheet.Cells[r, 21].Text;
+                        var имя = usersWorksheet.Cells[r, 2].Text;
+                        var отчество = usersWorksheet.Cells[r, 3].Text;
+                        var номерБилета = usersWorksheet.Cells[r, 4].Text;
+                        var статус = usersWorksheet.Cells[r, 5].Text;
+                        var группа = usersWorksheet.Cells[r, 7].Text;
+                        var целевик = usersWorksheet.Cells[r, 10].Text;
 
                         var group = dbContext.Groups.FirstOrDefault(g => g.Name == группа);
                         var student = dbContext.Users.Where(d => !d.IsDeleted).FirstOrDefault(s => s.FirstName == имя && s.LastName == фамиилия && s.Patronymic == отчество);
-                        if(student == null)
+                        if (student == null)
                         {
                             var login = фамиилия.ToLower();
                             if (имя.Any())
@@ -249,32 +236,47 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 Patronymic = отчество,
                                 FullName = String.Format("{0} {1} {2}", фамиилия, имя, отчество),
                                 Number = номерБилета,
-                                ClaimNumber = 1
+                                //ClaimNumber = 1
                             };
                             dbContext.Users.Add(student);
                         }
                         else
                         {
-                            dbContext.ProfilePrioritys.RemoveRange(student.ProfilePrioritys);
+                            student.FirstName = имя;
+                            student.LastName = фамиилия;
+                            student.Patronymic = отчество;
+                            student.FullName = String.Format("{0} {1} {2}", фамиилия, имя, отчество);
+                            student.Number = номерБилета;
+                            //dbContext.ProfilePrioritys.RemoveRange(student.ProfilePrioritys);
                             dbContext.SaveChanges();
                         }
-                        student.IsActive = !отчислен.Contains("Да");
+                        student.IsActive = !статус.Contains("отчислен");
                         student.CurrentGroup = group;
+                        student.Direction = group.Direction;
 
 
-                        if (!string.IsNullOrEmpty(целевик) && номерБилета != "МО")
+                        if (целевик.Contains("Да"))
                         {
                             var status = dbContext.Statuses.First(s => s.Name == "Целевой");
-                            if (целевик.Trim().ToLower() != "да")
-                            {
-                                student.StatusComm = целевик;
-                            }
                             student.Status = status;
                         }
-                        if (номерБилета == "МО")
+                        //if (номерБилета == "МО")
+                        //{
+                        //    var status = dbContext.Statuses.First(s => s.Name == "МО");
+                        //    student.Status = status;
+                        //}
+                        if (статус.Contains("академический отпуск")||статус.Contains("возможный"))
                         {
-                            var status = dbContext.Statuses.First(s => s.Name == "МО");
+                            var status = dbContext.Statuses.First(s => s.Name == "Не беспокоить");
                             student.Status = status;
+                            if (статус.Contains("академический отпуск"))
+                            {
+                                student.StatusComm = "Академический отпуск";
+                            }
+                            if (статус.Contains("возможный"))
+                            {
+                                student.StatusComm = "Возможный";
+                            }
                         }
                         if (student.Status == null)
                         {
@@ -282,197 +284,620 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             student.Status = status;
                         }
 
+                        //var profiles = dbContext.Profiles.ToList();
+                        //var groups = dbContext.Groups.ToList();
+                        //var departments = dbContext.Departments.ToList();
+                        //if (!string.IsNullOrEmpty(ИППО) && ИППО != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "ИППО");
+                        //    var i = Convert.ToInt32(ИППО);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(ВТ) && ВТ != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "ВТ");
+                        //    var i = Convert.ToInt32(ВТ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(ПИ) && ПИ != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "ПИ");
+                        //    var i = Convert.ToInt32(ПИ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(МОСИТ) && МОСИТ != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "МОСИТ");
+                        //    var i = Convert.ToInt32(МОСИТ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(КИС) && КИС != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "КИС");
+                        //    var i = Convert.ToInt32(КИС);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(ПМ) && ПМ != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "ПМ");
+                        //    var i = Convert.ToInt32(ПМ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(ППИ) && ППИ != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName == "ППИ");
+                        //    var i = Convert.ToInt32(ППИ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+
+                        //if (!string.IsNullOrEmpty(БК239) && БК239 != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК239");
+                        //    var i = Convert.ToInt32(БК239);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+
+                        //#region не используемые направления
+                        //if (!string.IsNullOrEmpty(БК244) && БК244 != "0")
+                        //{
+                        //    var i = Convert.ToInt32(БК244);
+                        //    var profile = profiles[i - 1];
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(БК248) && БК248 != "0")
+                        //{
+                        //    var i = Convert.ToInt32(БК248);
+                        //    var profile = profiles[i - 1];
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(БК250) && БК250 != "0")
+                        //{
+                        //    var i = Convert.ToInt32(БК250);
+                        //    var profile = profiles[i - 1];
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //if (!string.IsNullOrEmpty(БК254) && БК254 != "0")
+                        //{
+                        //    var i = Convert.ToInt32(БК254);
+                        //    var profile = profiles[i - 1];
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //#endregion
+
+                        //if (!string.IsNullOrEmpty(БК256) && БК256 != "0")
+                        //{
+                        //    var direction = groups.First(d => d.Name == группа).Direction;
+                        //    var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК256");
+                        //    var i = Convert.ToInt32(ППИ);
+                        //    var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                        //    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //    {
+                        //        Priority = i,
+                        //        Profile = profile,
+                        //        Student = student
+                        //    });
+                        //}
+                        //dbContext.SaveChanges();
+                        //manager.AddToRole(student.Id, Constants.RolesConstants.Student.Name);
+
+                        //if (!dbContext.ProfilePrioritys.Any(pp => pp.Student.Id == student.Id))
+                        //{
+                        //    var studentProfiles = dbContext.Profiles.Where(p => p.Direction.Id == group.Direction.Id).Take(4).ToList();
+                        //    foreach (var studentProfile in studentProfiles)
+                        //    {
+                        //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        //        {
+                        //            Priority = 0,
+                        //            Profile = studentProfile,
+                        //            Student = student
+                        //        });
+                        //    }
+                        dbContext.SaveChanges();
+                        manager.AddToRole(student.Id, Constants.RolesConstants.Student.Name);
+                    }
+                }
+            }
+            //}
+            return RedirectToAction("Students", "Home", new { Area = "Admin" });
+        }
+
+        [HttpPost]
+        public ActionResult UploadStudentProfilesFile(HttpPostedFileBase file)
+        {
+            using (var dbContext = new ApplicationDbContext())
+            {
+                var store = new UserStore<ApplicationUser>(dbContext);
+                var manager = new UserManager<ApplicationUser>(store);
+                using (var excelPackage = new ExcelPackage(file.InputStream))
+                {
+                    var usersWorksheet = excelPackage.Workbook.Worksheets.First();
+                    var rowsCount = usersWorksheet.Dimension.End.Row;
+                    for (int r = 2; r <= rowsCount; r++)
+                    {
+                        var фамиилия = usersWorksheet.Cells[r, 2].Text;
+                        if (string.IsNullOrEmpty(фамиилия))
+                        {
+                            break;
+                        }
+
+                        var имя = usersWorksheet.Cells[r, 3].Text;
+                        var отчество = usersWorksheet.Cells[r, 4].Text;
+                        var номерБилета = usersWorksheet.Cells[r, 5].Text;
+                        var группа = usersWorksheet.Cells[r, 6].Text;
+                        var ИППО = usersWorksheet.Cells[r, 9].Text;
+                        var ВТ = usersWorksheet.Cells[r, 10].Text;
+                        var ПИ = usersWorksheet.Cells[r, 11].Text;
+                        var МОСИТ = usersWorksheet.Cells[r, 12].Text;
+                        var КИС = usersWorksheet.Cells[r, 13].Text;
+                        var ПМ = usersWorksheet.Cells[r, 14].Text;
+                        var ППИ = usersWorksheet.Cells[r, 15].Text;
+                        var БК239 = usersWorksheet.Cells[r, 16].Text;
+                        var БК244 = usersWorksheet.Cells[r, 17].Text;
+                        var БК248 = usersWorksheet.Cells[r, 18].Text;
+                        var БК250 = usersWorksheet.Cells[r, 19].Text;
+                        var БК254 = usersWorksheet.Cells[r, 20].Text;
+                        var БК256 = usersWorksheet.Cells[r, 21].Text;
+
+                        var group = dbContext.Groups.FirstOrDefault(g => g.Name == группа);
+                        var student = dbContext.Users.Where(d => !d.IsDeleted).FirstOrDefault(s => s.FirstName == имя && s.LastName == фамиилия && s.Patronymic == отчество);//добавить личный номер
+
                         var profiles = dbContext.Profiles.ToList();
                         var groups = dbContext.Groups.ToList();
                         var departments = dbContext.Departments.ToList();
-                        if (!string.IsNullOrEmpty(ИППО) && ИППО != "0")
+                        if (student != null)
                         {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "ИППО");
-                            var i = Convert.ToInt32(ИППО);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            if (!string.IsNullOrEmpty(ИППО) && ИППО != "0")
                             {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(ВТ) && ВТ != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "ВТ");
-                            var i = Convert.ToInt32(ВТ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(ПИ) && ПИ != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "ПИ");
-                            var i = Convert.ToInt32(ПИ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(МОСИТ) && МОСИТ != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "МОСИТ");
-                            var i = Convert.ToInt32(МОСИТ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(КИС) && КИС != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "КИС");
-                            var i = Convert.ToInt32(КИС);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(ПМ) && ПМ != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "ПМ");
-                            var i = Convert.ToInt32(ПМ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(ППИ) && ППИ != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName == "ППИ");
-                            var i = Convert.ToInt32(ППИ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-
-                        if (!string.IsNullOrEmpty(БК239) && БК239 != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК239");
-                            var i = Convert.ToInt32(БК239);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-
-                        #region не используемые направления
-                        if (!string.IsNullOrEmpty(БК244) && БК244 != "0")
-                        {
-                            var i = Convert.ToInt32(БК244);
-                            var profile = profiles[i - 1];
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(БК248) && БК248 != "0")
-                        {
-                            var i = Convert.ToInt32(БК248);
-                            var profile = profiles[i - 1];
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(БК250) && БК250 != "0")
-                        {
-                            var i = Convert.ToInt32(БК250);
-                            var profile = profiles[i - 1];
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        if (!string.IsNullOrEmpty(БК254) && БК254 != "0")
-                        {
-                            var i = Convert.ToInt32(БК254);
-                            var profile = profiles[i - 1];
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        #endregion
-
-                        if (!string.IsNullOrEmpty(БК256) && БК256 != "0")
-                        {
-                            var direction = groups.First(d => d.Name == группа).Direction;
-                            var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК256");
-                            var i = Convert.ToInt32(ППИ);
-                            var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
-                            dbContext.ProfilePrioritys.Add(new ProfilePriority
-                            {
-                                Priority = i,
-                                Profile = profile,
-                                Student = student
-                            });
-                        }
-                        dbContext.SaveChanges();
-                        manager.AddToRole(student.Id, Constants.RolesConstants.Student.Name);
-
-                        if (!dbContext.ProfilePrioritys.Any(pp => pp.Student.Id == student.Id))
-                        {
-                            var studentProfiles = dbContext.Profiles.Where(p => p.Direction.Id == group.Direction.Id).Take(4).ToList();
-                            foreach (var studentProfile in studentProfiles)
-                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "ИППО");
+                                var i = Convert.ToInt32(ИППО);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
                                 dbContext.ProfilePrioritys.Add(new ProfilePriority
                                 {
-                                    Priority = 0,
-                                    Profile = studentProfile,
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(ВТ) && ВТ != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "ВТ");
+                                var i = Convert.ToInt32(ВТ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(ПИ) && ПИ != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "ПИ");
+                                var i = Convert.ToInt32(ПИ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(МОСИТ) && МОСИТ != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "МОСИТ");
+                                var i = Convert.ToInt32(МОСИТ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(КИС) && КИС != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "КИС");
+                                var i = Convert.ToInt32(КИС);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(ПМ) && ПМ != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "ПМ");
+                                var i = Convert.ToInt32(ПМ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(ППИ) && ППИ != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName == "ППИ");
+                                var i = Convert.ToInt32(ППИ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+
+                            if (!string.IsNullOrEmpty(БК239) && БК239 != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК239");
+                                var i = Convert.ToInt32(БК239);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+
+                            #region не используемые направления
+                            if (!string.IsNullOrEmpty(БК244) && БК244 != "0")
+                            {
+                                var i = Convert.ToInt32(БК244);
+                                var profile = profiles[i - 1];
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(БК248) && БК248 != "0")
+                            {
+                                var i = Convert.ToInt32(БК248);
+                                var profile = profiles[i - 1];
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(БК250) && БК250 != "0")
+                            {
+                                var i = Convert.ToInt32(БК250);
+                                var profile = profiles[i - 1];
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            if (!string.IsNullOrEmpty(БК254) && БК254 != "0")
+                            {
+                                var i = Convert.ToInt32(БК254);
+                                var profile = profiles[i - 1];
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
+                                    Student = student
+                                });
+                            }
+                            #endregion
+
+                            if (!string.IsNullOrEmpty(БК256) && БК256 != "0")
+                            {
+                                var direction = groups.First(d => d.Name == группа).Direction;
+                                var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК256");
+                                var i = Convert.ToInt32(ППИ);
+                                var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
+                                dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                {
+                                    Priority = i,
+                                    Profile = profile,
                                     Student = student
                                 });
                             }
                             dbContext.SaveChanges();
+
+                            if (!dbContext.ProfilePrioritys.Any(pp => pp.Student.Id == student.Id))
+                            {
+                                var studentProfiles = dbContext.Profiles.Where(p => p.Direction.Id == group.Direction.Id).Take(4).ToList();
+                                foreach (var studentProfile in studentProfiles)
+                                {
+                                    dbContext.ProfilePrioritys.Add(new ProfilePriority
+                                    {
+                                        Priority = 0,
+                                        Profile = studentProfile,
+                                        Student = student
+                                    });
+                                }
+                                dbContext.SaveChanges();
+                            }
+
+                            //var LStudents = dbContext.Users.Where(s => !s.ProfilePrioritys.Any());
+                            //var Lprofiles = dbContext.Profiles.ToArray();
+                            //foreach (var loststudents in LStudents)
+                            //{
+                            //    if (loststudents.Direction.Id==1)
+                            //    {
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l=>l.Department.ShortName=="ВТ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ПИ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "МОСИТ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ПМ"),
+                            //            Student = loststudents
+                            //        });
+                            //    }
+
+                            //    if (loststudents.Direction.Id == 2)
+                            //    {
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ППИ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 239"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 256"),
+                            //            Student = loststudents
+                            //        });
+                            //    }
+
+                            //    if (loststudents.Direction.Id == 3)
+                            //    {
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ИППО"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ВТ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "МОСИТ"),
+                            //            Student = loststudents
+                            //        });
+
+                            //        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                            //        {
+                            //            Priority = 0,
+                            //            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "КИС"),
+                            //            Student = loststudents
+                            //        });
+                            //    }
+
+                            //    dbContext.SaveChanges();
+                            //}
                         }
                     }
                 }
+
+                var LStudents = dbContext.Users.Where(s => !s.ProfilePrioritys.Any() && s.CurrentGroup!=null);
+                var Lprofiles = dbContext.Profiles.ToArray();
+                foreach (var loststudents in LStudents)
+                {
+                    if (loststudents.CurrentGroup.Direction.Id == 1)
+                    {
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ВТ" && l.Direction==loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ПИ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "МОСИТ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ПМ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+                    }
+
+                    if (loststudents.CurrentGroup.Direction.Id == 2)
+                    {
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ППИ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 239" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 256" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+                    }
+
+                    if (loststudents.CurrentGroup.Direction.Id == 3)
+                    {
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ИППО" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "ВТ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "МОСИТ" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+
+                        dbContext.ProfilePrioritys.Add(new ProfilePriority
+                        {
+                            Priority = 0,
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "КИС" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Student = loststudents
+                        });
+                    }
+
+                    
+                }
+                dbContext.SaveChanges();
+                return RedirectToAction("Students", "Home", new { Area = "Admin" });
             }
-            return RedirectToAction("Students", "Home", new { Area = "Admin" });
         }
+
 
         [HttpPost]
         public ActionResult UploadStudentPointsInfoFile(HttpPostedFileBase file)
@@ -489,7 +914,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         var rowsCount = usersWorksheet.Dimension.End.Row;
                         int c = 3;
                         var columnCount = 0;
-                        string[] columnName = new string[50];
+                        string[] columnName = new string[150];
                         while (usersWorksheet.Cells[6, c].Text!="Всего оценок") {
                             columnName[columnCount] = usersWorksheet.Cells[7, c].Text;
                             columnCount++;
@@ -855,7 +1280,14 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         worksheet.Cells[i, 3].Value = student.FirstName;
                         worksheet.Cells[i, 4].Value = student.Patronymic;
                         worksheet.Cells[i, 5].Value = string.Format("{0} {1} {2}", student.LastName, student.FirstName, student.Patronymic);
-                        worksheet.Cells[i, 6].Value = student.CurrentGroup.Name;
+                        if (student.CurrentGroup==null)
+                        {
+                            worksheet.Cells[i, 6].Value = "НЕТ";
+                        }
+                        else
+                        {
+                            worksheet.Cells[i, 6].Value = student.CurrentGroup.Name;
+                        }
                         if (student.PreviewGroup==null)
                         {
                             worksheet.Cells[i, 7].Value = "НЕТ";
@@ -897,14 +1329,14 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         foreach (var student in allStudents)
                         {
                             student.PreviewGroup?.PreviewGroupStudents.Clear();
-                            student.PreviewGroup = null;
+                            //student.PreviewGroup = null;
                             student.NewProfile?.Students.Clear();
-                            student.NewProfile = null;
+                            //student.NewProfile = null;
                         }
                         dbContext.SaveChanges();
 
                         var specialStudentsStatuses = dbContext.Statuses.Where(s => s.Name == "МО" || s.Name == "Целевой" || s.Name == "Не беспокоить").Select(s => s.Id).ToList();
-                        var specialStudents = dbContext.Users.Where(d => !d.IsDeleted).Where(s => specialStudentsStatuses.Contains(s.Status.Id)).ToList();
+                        var specialStudents = dbContext.Users.Where(d => !d.IsDeleted && d.CurrentGroup!=null).Where(s => specialStudentsStatuses.Contains(s.Status.Id)).ToList();
                         var profiles = dbContext.Profiles.Where(p => !p.IsDeleted).OrderBy(o => o.Id).ToList();
                         var groups = dbContext.Groups.ToList();
                         //foreach (var p in Profiles)
@@ -916,20 +1348,19 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         //}
                         foreach (var student in specialStudents)
                         {
-                            if(student.ProfilePrioritys.Any())
-                            {
+                            
                                 student.PreviewGroup = student.CurrentGroup;
                                 student.Direction = student.CurrentGroup.Direction;
                                 student.NewProfile = dbContext.Profiles.FirstOrDefault(p=>p.Direction.Id==student.CurrentGroup.Direction.Id &&
                                                                                             (p.Department.Id == student.CurrentGroup.Department.Id ||
                                                                                           (p.BaseDepartment != null ? p.BaseDepartment.Id==student.CurrentGroup.Department.Id : p.Department.Id == student.CurrentGroup.Department.Id)));
-                            }
+                            
                         }
                         //dbContextTransaction.Commit();
                         dbContext.SaveChanges();
 
                         var otherStudentsProfilePrioritys = dbContext.ProfilePrioritys
-                            .Where(u => u.Student.IsActive && !u.Student.IsDeleted && u.Student.Status.Name == "Обычный")
+                            .Where(u => u.Student.IsActive && !u.Student.IsDeleted && u.Student.Status.Name == "Обычный" && u.Student.CurrentGroup!=null)
                             .GroupBy(pp => pp.Priority)
                             .OrderBy(pp => pp.Key).ToList();
                         var users = dbContext.Users.Where(u => u.IsActive && !u.IsDeleted);
@@ -1053,7 +1484,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 } while (currentgroup.Count != currentgroup.PreviewGroupStudents.Count);
                             }
                         }
-                        //dbContextTransaction.Commit();
+                        dbContextTransaction.Commit();
                         dbContext.SaveChanges();
                     }
                     catch (Exception ex)

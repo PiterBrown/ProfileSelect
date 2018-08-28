@@ -7,22 +7,30 @@
 <div class="panel">
     <div class="panel-body">
         @using (Html.BeginForm("UploadStudentInfoFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
-        {
-            <div class="form-group">
-                <input type="file" name="file" class="pull-left" />
-                <input type="submit" value="Импорт данных студента" class="btn btn-primary pull-left" />
-                <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон приоритетов импорт.xlsm">Скачать шаблон для выставления приоритетов</a>
-            </div>
-        }
+    {
+        <div class="form-group">
+            <input type="file" name="file" class="pull-left" />
+            <input type="submit" value="Импорт данных студента" class="btn btn-primary pull-left" />
+            @*<a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон приоритетов импорт.xlsm">Скачать шаблон для выставления приоритетов</a>*@
+        </div>
+}
+        @using (Html.BeginForm("UploadStudentProfilesFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+    {
+        <div class="form-group">
+            <input type="file" name="file" class="pull-left" />
+            <input type="submit" value="Импорт заявления студента" class="btn btn-primary pull-left" />
+            <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон приоритетов импорт.xlsm">Скачать шаблон для выставления приоритетов</a>
+        </div>
+}
         @using (Html.BeginForm("UploadStudentPointsInfoFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
-        {
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                <input type="file" name="file" class="pull-left" />
-                <input type="submit" value="Импорт баллов студента" class="btn btn-primary pull-left" />
-                <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон среднего балла.xlsm">Скачать шаблон для выставления среднего балла</a>
-            </div>
-        }
+    {
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <input type="file" name="file" class="pull-left" />
+            <input type="submit" value="Импорт баллов студента" class="btn btn-primary pull-left" />
+            <a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон среднего балла.xlsm">Скачать шаблон для выставления среднего балла</a>
+        </div>
+}
     </div>
 </div>
 <div class="panel">
