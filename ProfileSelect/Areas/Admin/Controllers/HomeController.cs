@@ -892,11 +892,13 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 {
                     try
                     {
-                        
-                        var allStudents = dbContext.Users;
+
+                        var allStudents = dbContext.Users.ToList();
                         foreach (var student in allStudents)
                         {
+                            student.PreviewGroup?.PreviewGroupStudents.Clear();
                             student.PreviewGroup = null;
+                            student.NewProfile?.Students.Clear();
                             student.NewProfile = null;
                         }
                         dbContext.SaveChanges();
@@ -918,10 +920,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             {
                                 student.PreviewGroup = student.CurrentGroup;
                                 student.Direction = student.CurrentGroup.Direction;
-                                student.NewProfile = dbContext.Profiles.FirstOrDefault(p=>p.Direction.Id==student.CurrentGroup.Direction.Id && 
-                                                                                          (p.BaseDepartment != null ? p.BaseDepartment.Id==student.CurrentGroup.Department.Id : p.Department.Id == student.CurrentGroup.Department.Id));
+                                student.NewProfile = dbContext.Profiles.FirstOrDefault(p=>p.Direction.Id==student.CurrentGroup.Direction.Id &&
+                                                                                            (p.Department.Id == student.CurrentGroup.Department.Id ||
+                                                                                          (p.BaseDepartment != null ? p.BaseDepartment.Id==student.CurrentGroup.Department.Id : p.Department.Id == student.CurrentGroup.Department.Id)));
                             }
                         }
+                        //dbContextTransaction.Commit();
                         dbContext.SaveChanges();
 
                         var otherStudentsProfilePrioritys = dbContext.ProfilePrioritys
@@ -941,7 +945,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 otherStudentsProfilePriority.Where(s => s.Student.NewProfile == null).OrderByDescending(o => o.Student.Score);
                             }
 
-                            foreach (var profilePriority in orderedOtherStudentsProfilePriority)
+                            foreach (var profilePriority in orderedOtherStudentsProfilePriority.Where(s=>s.Student.NewProfile==null))
                             {
                                 var student = profilePriority.Student;
                                 var profile = profilePriority.Profile;
@@ -1049,12 +1053,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 } while (currentgroup.Count != currentgroup.PreviewGroupStudents.Count);
                             }
                         }
-                        dbContextTransaction.Commit();
+                        //dbContextTransaction.Commit();
                         dbContext.SaveChanges();
                     }
                     catch (Exception ex)
                     {
-                        dbContextTransaction.Rollback();
+                        //dbContextTransaction.Rollback();
                     }
                 }
             }
