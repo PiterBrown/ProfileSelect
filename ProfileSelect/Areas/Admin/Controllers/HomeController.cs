@@ -252,8 +252,6 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         }
                         student.IsActive = !статус.Contains("отчислен");
                         student.CurrentGroup = group;
-                        student.Direction = group.Direction;
-
 
                         if (целевик.Contains("Да"))
                         {
