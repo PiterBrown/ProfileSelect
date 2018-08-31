@@ -1398,6 +1398,10 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 if (profCount != 0)
                                 {
                                     student.NewProfile = profile;
+                                    if (student.NewProfile.Direction==student.CurrentGroup.Direction && student.NewProfile.Department==student.CurrentGroup.Department)
+                                    {
+                                        student.PreviewGroup = student.CurrentGroup;
+                                    }
                                     dbContext.SaveChanges();
                                 }
                             }
@@ -1436,6 +1440,10 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                     if (profCount != 0)
                                     {
                                         student.NewProfile = profile;
+                                        if (student.NewProfile.Direction == student.CurrentGroup.Direction && student.NewProfile.Department == student.CurrentGroup.Department)
+                                        {
+                                            student.PreviewGroup = student.CurrentGroup;
+                                        }
                                         dbContext.SaveChanges();
                                     }
                                 }
