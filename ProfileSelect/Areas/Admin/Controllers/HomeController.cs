@@ -202,6 +202,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         var отчество = usersWorksheet.Cells[r, 3].Text;
                         var номерБилета = usersWorksheet.Cells[r, 4].Text;
                         var статус = usersWorksheet.Cells[r, 5].Text;
+                        var мо = usersWorksheet.Cells[r, 6].Text;
                         var группа = usersWorksheet.Cells[r, 7].Text;
                         var целевик = usersWorksheet.Cells[r, 10].Text;
 
@@ -258,11 +259,11 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             var status = dbContext.Statuses.First(s => s.Name == "Целевой");
                             student.Status = status;
                         }
-                        //if (номерБилета == "МО")
-                        //{
-                        //    var status = dbContext.Statuses.First(s => s.Name == "МО");
-                        //    student.Status = status;
-                        //}
+                        if (мо.Contains("МО"))
+                        {
+                            var status = dbContext.Statuses.First(s => s.Name == "МО");
+                            student.Status = status;
+                        }
                         if (статус.Contains("академический отпуск")||статус.Contains("возможный"))
                         {
                             var status = dbContext.Statuses.First(s => s.Name == "Не беспокоить");
@@ -276,11 +277,11 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 student.StatusComm = "Возможный";
                             }
                         }
-                        if (student.Status == null)
-                        {
-                            var status = dbContext.Statuses.First(s => s.Name == "Обычный");
-                            student.Status = status;
-                        }
+                        //if (student.Status == null)
+                        //{
+                        //    var status = dbContext.Statuses.First(s => s.Name == "Обычный");
+                        //    student.Status = status;
+                        //}
 
                         //var profiles = dbContext.Profiles.ToList();
                         //var groups = dbContext.Groups.ToList();
@@ -846,14 +847,14 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         dbContext.ProfilePrioritys.Add(new ProfilePriority
                         {
                             Priority = 0,
-                            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 239" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "БК 239" && l.Direction == loststudents.CurrentGroup.Direction),
                             Student = loststudents
                         });
 
                         dbContext.ProfilePrioritys.Add(new ProfilePriority
                         {
                             Priority = 0,
-                            Profile = Lprofiles.FirstOrDefault(l => l.BaseDepartment.ShortName == "БК 256" && l.Direction == loststudents.CurrentGroup.Direction),
+                            Profile = Lprofiles.FirstOrDefault(l => l.Department.ShortName == "БК 256" && l.Direction == loststudents.CurrentGroup.Direction),
                             Student = loststudents
                         });
                     }
