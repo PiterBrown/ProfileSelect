@@ -678,7 +678,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             {
                                 var direction = groups.First(d => d.Name == группа).Direction;
                                 var department = departments.First(d => d.ShortName.Replace(" ", string.Empty) == "БК256");
-                                var i = Convert.ToInt32(ППИ);
+                                var i = Convert.ToInt32(БК256);//ОШИБКА! БК256
                                 var profile = profiles.First(p => p.Direction.Id == direction.Id && p.Department.Id == department.Id);
                                 dbContext.ProfilePrioritys.Add(new ProfilePriority
                                 {
@@ -1397,7 +1397,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 if (profCount != 0)
                                 {
                                     student.NewProfile = profile;
-                                    if (student.NewProfile.Direction==student.CurrentGroup.Direction && student.NewProfile.Department==student.CurrentGroup.Department)
+                                    if (student.NewProfile.Direction==student.CurrentGroup.Direction && student.NewProfile.Department==student.CurrentGroup.Department) //Добавить БК
                                     {
                                         student.PreviewGroup = student.CurrentGroup;
                                     }
