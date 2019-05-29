@@ -280,13 +280,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201808011014540_Initial.cs" />
-    <Compile Include="Migrations\201808011014540_Initial.Designer.cs">
-      <DependentUpon>201808011014540_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808271853166_Bugfix1.cs" />
-    <Compile Include="Migrations\201808271853166_Bugfix1.Designer.cs">
-      <DependentUpon>201808271853166_Bugfix1.cs</DependentUpon>
+    <Compile Include="Migrations\201905231725145_1.cs" />
+    <Compile Include="Migrations\201905231725145_1.Designer.cs">
+      <DependentUpon>201905231725145_1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
@@ -307,6 +303,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
+    <Compile Include="ViewModels\BlockCompViewModel.cs" />
+    <Compile Include="ViewModels\BlockPriorityViewModel.cs" />
     <Compile Include="ViewModels\ClaimViewModel.cs" />
     <Compile Include="ViewModels\DepartmentViewModel.cs" />
     <Compile Include="ViewModels\DirectionViewModel.cs" />
@@ -573,6 +571,9 @@
     <Content Include="Areas\Admin\Data\Шаблон среднего балла.xlsm" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
+    <Content Include="App_Data\Заявление шаблон090301.docx" />
+    <Content Include="App_Data\Заявление шаблон090303.docx" />
+    <Content Include="App_Data\Заявление шаблон090304.docx" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -727,11 +728,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201808011014540_Initial.resx">
-      <DependentUpon>201808011014540_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808271853166_Bugfix1.resx">
-      <DependentUpon>201808271853166_Bugfix1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905231725145_1.resx">
+      <DependentUpon>201905231725145_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

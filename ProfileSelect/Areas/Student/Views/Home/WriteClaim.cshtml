@@ -5,90 +5,151 @@
 }
 
 <div class="table-responsive col-md-12">
-    <h3 class="pull-left margin-bottom-10">Написать заявление №@Model.ClaimNuber</h3>
-    <h4 class="pull-left">Заполните форму, расставив приоритеты от 1 до @Model.ProfilePriorities.Count, где 1 - самое приоритетное направление, а @Model.ProfilePriorities.Count - самое <strong>не</strong> приоритетное направление</h4>
-    @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank", id="send-data-form" }))
+    <h3 >Написать заявление №@Model.ClaimNuber</h3>
+    <h4 >Заполните форму, расставив приоритеты в порядке убывания, где 1 - самый приоритетный профиль или блок дисциплин</h4>
+    <h4 ><strong>Внимание!</strong>
+    <ul>
+        <li>Приоритеты не могут повторяться в столбце "Приоритет профиля"</li>
+        <li>Приоритеты не могут повторяться в столбце "Приоритет дисциплин" среди строк, принадлежащих отдому профилю</li>
+        </ul></h4>
+    @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank", id = "send-data-form" }))
     {
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Название кафедры</th>
                     <th>Название профиля</th>
-                    <th>Приоритет</th>
+                    <th>Приоритет профиля</th>
+                    <th>Дисциплины</th>
+                    <th>Приоритет дисциплин</th>
                 </tr>
             </thead>
-            <tbody>
-                @{
-                    var i = 0;
-                }
-                @foreach (var item in Model.ProfilePriorities)
+            @{
+                var i = 0;
+                var m = 0;
+                var k = 0;
+            }
+            @foreach (var cl in Model.Profiles.Where(p => p.DirectionId == Model.Direction))
+            {
+                k = 0;
+                var rowcountBlock = Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).GroupBy(bc => bc.BlockId).Count();
+                var rowcountProfile = Model.Profiles.Where(p => p.DirectionId == Model.Direction).Count();
+                <input type="hidden" name="ProfilePriorities[@i].Id" value="@cl.Id" />
+                if (Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).Any())
                 {
-                    <input type="hidden" name="ProfilePriorities[@i].Id" value="@item.Id" />
-                    <tr>
-                        <td>@item.DepartmentName</td>
-                        <td>@item.ProfileName</td>
-                        <td><input type="number" min="1" max="@Model.ProfilePriorities.Count" class="form-control user-selected-number" style="width: 70px" name="ProfilePriorities[@i].Priority" value=""/></td>
-                    </tr>
-                    i++;
+                    <tbody class="block">
+                        @foreach (var bl in Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).GroupBy(bc => bc.BlockId))
+                        {
+
+
+                            <input type="hidden" name="BlockPriorities[@m].Id" value="@bl.Key" />
+                            if (k == 0)
+                            {
+                                <tr>
+                                    <td rowspan="@rowcountBlock">@cl.Name</td>
+                                    <td rowspan="@rowcountBlock"><input type="number" min="1" max="@rowcountProfile" class="form-control user-selected-number profile-priority" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
+                                    <td>
+                                        <ul>
+                                            @foreach (var s in bl.Where(b => b.DirectionId == cl.DirectionId))
+                                            {
+                                                <li>@s.SubjectName</li>}
+                                        </ul>
+                                    </td>
+                                    <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
+                                </tr>
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>
+                                        <ul>
+                                            @foreach (var s in bl)
+                                            {
+                                                <li>@s.SubjectName</li>}
+                                        </ul>
+                                    </td>
+                                    <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
+                                </tr>
+
+                            }
+
+                            k++;
+                            m++;
+
+
+                        }
+                    </tbody>
                 }
-            </tbody>
+                else
+                {
+                    <tbody class="block">
+                        <tr>
+                            <td>@cl.Name</td>
+                            <td><input type="number" min="1" max="@rowcountProfile" class="form-control user-selected-number profile-priority" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
+                            <th>НЕ ПРИМЕНИМО</th>
+                            <th>НЕ ПРИМЕНИМО</th>
+                        </tr>
+                    </tbody>
+                }
+                i++;
+            }
         </table>
-        <h4 class="pull-left"><strong>Внимание!</strong> Заявление необходимо распечатать и принести в аудиторию А-419! Без принесенного заявления Ваш выбор учитываться не будет!</h4>
-        <input type="submit" class="btn btn-primary pull-left" value="Распечатать заявление" />
-        <a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
+        <h4><strong>Внимание!</strong> Заявление необходимо распечатать, подписать и сдать преподавателю на зачете по Учебной практике! Без принесенного заявления Ваш выбор учитываться не будет!</h4><br>
+        <input type="submit" class="btn btn-primary" value="Распечатать заявление" />
+        //<a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
     }
 </div>
 
 @section scripts{
-  @Scripts.Render("~/bundles/jqueryval")
-  <script type="text/javascript">
-    jQuery.extend(jQuery.validator.messages, {
-      required: "Требуется"
-    });
-    jQuery.validator.addMethod("notEqualToGroup",
-      function(value, element, options) {
-        // get all the elements passed here with the same class
-        var elems = $(element).parents('form').find(options[0]);
-        var valueToCompare = value;
-        // count
-        var matchesFound = 0;
-        // loop each element and compare its value with the current value and increase the count every time we find one
-        jQuery.each(elems,
-          function() {
-            var thisVal = $(this).val();
-            if (thisVal === valueToCompare) {
-              matchesFound++;
-            }
-          });
-        // count should be either 0 or 1 max
-        if (this.optional(element) || matchesFound <= 1) {
-          elems.removeClass('text-danger');
-          return true;
-        } else {
-          elems.addClass('text-danger');
-        }
-      },
-      jQuery.format("Не должно быть одинаковых значений"));
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        jQuery.extend(jQuery.validator.messages, {
+            required: "Требуется"
+        });
+        jQuery.validator.addMethod("notEqualToGroup",
+            function (value, element, options) {
+                // get all the elements passed here with the same class
+                var elems = $(element).parents(options[1] ? '.block' : 'form').find(options[0]);
+                var valueToCompare = value;
+                // count
+                var matchesFound = 0;
+                // loop each element and compare its value with the current value and increase the count every time we find one
+                jQuery.each(elems,
+                    function () {
+                        var thisVal = $(this).val();
+                        if (thisVal === valueToCompare) {
+                            matchesFound++;
+                        }
+                    });
+                // count should be either 0 or 1 max
+                if (this.optional(element) || matchesFound <= 1) {
+                    elems.removeClass('text-danger');
+                    return true;
+                } else {
+                    elems.addClass('text-danger');
+                }
+            },
+            jQuery.format("Не должно быть одинаковых значений"));
 
-    $("#send-data-form").validate({
-      rules: {
-        'ProfilePriorities[0].Priority': {
-          required: true,
-          notEqualToGroup: ['.user-selected-number']
-        },
-        'ProfilePriorities[1].Priority': {
-          required: true,
-          notEqualToGroup: ['.user-selected-number']
-        },
-        'ProfilePriorities[2].Priority': {
-          required: true,
-          notEqualToGroup: ['.user-selected-number']
-        },
-        'ProfilePriorities[3].Priority': {
-          required: true,
-          notEqualToGroup: ['.user-selected-number']
-        }
-      }
-    });
-  </script>
+        $("#send-data-form").validate({
+            rules: Object.assign(
+                {},
+                Array.from(Array(4).keys()).reduce((obj, i) => {
+                    obj[`ProfilePriorities[${i}].Priority`] = {
+                        required: true,
+                        notEqualToGroup: [".user-selected-number.profile-priority"]
+                    };
+
+                    return obj;
+                }, {}),
+                Array.from(Array(7).keys()).reduce((obj, i) => {
+                    obj[`BlockPriorities[${i}].Priority`] = {
+                        required: true,
+                        notEqualToGroup: [".user-selected-number.block-priority", true]
+                    };
+                    return obj;
+                }, {})
+            )
+        });
+    </script>
 }

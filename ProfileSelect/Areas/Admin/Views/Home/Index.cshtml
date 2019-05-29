@@ -7,10 +7,31 @@
 <div class="panel">
     <div class="panel-body">
         @using (Html.BeginForm("UploadStudentInfoFile", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
-    {
+        {
         <div class="form-group">
+            @{
+                var status = Model.Status;
+            }
             <input type="file" name="file" class="pull-left" />
             <input type="submit" value="Импорт данных студента" class="btn btn-primary pull-left" />
+            <div class="col-md-4">
+                @{
+                    var statusList = Model.Status;//.Remove(Model.Status.First(s=>s.Name=="Целевик"));
+                    statusList.Remove(Model.Status.First(s => s.Name == "Целевик"));
+                    }
+                
+                @Html.DropDownListFor(x => x.StatusSelectId, new SelectList(statusList, "Id", "Name", Model.StatusSelectId), new { @class = "form-control", required = "" })
+            </div>
+            @*<select class="form-control" name="statusSelect">
+                @foreach (var o in status.OrderByDescending(s=>s.Id))
+                {
+                    if (o.Name != "Целевик")
+                    {
+                    <option value="@o">@o.Name</option>
+                    }
+                }
+        </select>*@
+
             @*<a class="btn btn-primary" download href="~/Areas/Admin/Data/Шаблон приоритетов импорт.xlsm">Скачать шаблон для выставления приоритетов</a>*@
         </div>
 }

@@ -24,6 +24,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 var role = dbContext.Roles.First(r => r.Name == Constants.RolesConstants.Student.Name);
                 var users = dbContext.Users.Where(u => !u.IsDeleted && u.Roles.Any(r => r.RoleId == role.Id)).ToList();
                 var groups = dbContext.Groups.ToList();
+                var statuses = dbContext.Statuses.ToList();
                 return View(new AdminViewModel
                 {
                     Students = users.Select(s => new StudentViewModel
@@ -35,6 +36,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     {
                         Id = g.Id,
                         Name = g.Name
+                    }).ToList(),
+                    Status = statuses.Select(s=> new StatusViewModel
+                    {
+                        Id=s.Id,
+                        Name = s.Name
+
                     }).ToList()
                 });
             }
@@ -176,7 +183,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadStudentInfoFile(HttpPostedFileBase file)
+        public ActionResult UploadStudentInfoFile(HttpPostedFileBase file, AdminViewModel adminViewModel)
         {
             using (var dbContext = new ApplicationDbContext())
             {
@@ -186,28 +193,58 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 {
                     var usersWorksheet = excelPackage.Workbook.Worksheets.First();
                     var rowsCount = usersWorksheet.Dimension.End.Row;
+                    var colCount = usersWorksheet.Dimension.End.Column;
+                    var lnameCol = 0;
+                    var nameCol = 0;
+                    var patCol = 0;
+                    var numbCol = 0;
+                    var groupCol = 0;
+                    var baseCol = 0;
+                    var baseNameCol = 0;
+                    for (int c=2;c<=colCount;c++)
+                    {
+                        switch(usersWorksheet.Cells[1, c].Text)
+                        {
+                            case "Фамилия": lnameCol = c; break;
+                            case "Имя": nameCol = c; break;
+                            case "Отчество": patCol = c; break;
+                            case "Личный номер": numbCol = c; break;
+                            case "Группа": groupCol = c; break;
+                            case "Целевик": baseCol = c; break;
+                            case "База": baseNameCol = c; break;
+                        }
+                    }
                     for (int r = 2; r <= rowsCount; r++)
                     {
-                        var фамиилия = usersWorksheet.Cells[r, 1].Text;
+                        var фамиилия = usersWorksheet.Cells[r, lnameCol].Text;
                         if (string.IsNullOrEmpty(фамиилия))
                         {
                             break;
                         }
-                        //if (r == 514)
-                        //{
-                        //    фамиилия = usersWorksheet.Cells[r, 2].Text;
-                        //}
-
-                        var имя = usersWorksheet.Cells[r, 2].Text;
-                        var отчество = usersWorksheet.Cells[r, 3].Text;
-                        var номерБилета = usersWorksheet.Cells[r, 4].Text;
-                        var статус = usersWorksheet.Cells[r, 5].Text;
-                        var мо = usersWorksheet.Cells[r, 6].Text;
-                        var группа = usersWorksheet.Cells[r, 7].Text;
-                        var целевик = usersWorksheet.Cells[r, 10].Text;
-
+                        
+                        var имя = usersWorksheet.Cells[r, nameCol].Text;
+                        var отчество = usersWorksheet.Cells[r, patCol].Text;
+                        var личныйНомер = usersWorksheet.Cells[r, numbCol].Text;
+                        var статус = dbContext.Statuses.First(s => s.Id == adminViewModel.StatusSelectId);//usersWorksheet.Cells[r, 5].Text;
+                        var статусКом = статус.Name == "Академический отпуск" || статус.Name == "МО" ? статус.Name : null;
+                        //var мо = usersWorksheet.Cells[r, 6].Text;
+                        var группа = usersWorksheet.Cells[r, groupCol].Text;
+                        var целевик = usersWorksheet.Cells[r, baseCol].Text;
+                        var база = usersWorksheet.Cells[r, baseNameCol].Text;
+                        if (целевик=="Да")
+                        {
+                            статус = dbContext.Statuses.First(s => s.Name == "Целевик");
+                        }
+                        if (статусКом!=null && база!="")
+                        {
+                            статусКом = статусКом + "; " + база;
+                        }
+                        if (статусКом==null && база!="")
+                        {
+                            статусКом = база;
+                        }
                         var group = dbContext.Groups.FirstOrDefault(g => g.Name == группа);
-                        var student = dbContext.Users.Where(d => !d.IsDeleted).FirstOrDefault(s => s.FirstName == имя && s.LastName == фамиилия && s.Patronymic == отчество);
+                        var student = dbContext.Users.Where(d => !d.IsDeleted).FirstOrDefault(s => s.Number==личныйНомер);
                         if (student == null)
                         {
                             var login = фамиилия.ToLower();
@@ -230,15 +267,20 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             {
                                 CreateDate = DateTime.Now,
                                 PasswordHash = Membership.GeneratePassword(6, 1),
+                                ValidUntil = DateTime.Now.AddMonths(4),
                                 UserName = login,
                                 SecurityStamp = "",
                                 FirstName = имя,
                                 LastName = фамиилия,
                                 Patronymic = отчество,
                                 FullName = String.Format("{0} {1} {2}", фамиилия, имя, отчество),
-                                Number = номерБилета,
-                                //ClaimNumber = 1
-                            };
+                                Number = личныйНомер,
+                                IsActive = true,
+                            CurrentGroup = group,
+                            Status = статус,
+                            StatusComm=статусКом
+                            //ClaimNumber = 1
+                        };
                             dbContext.Users.Add(student);
                         }
                         else
@@ -247,36 +289,39 @@ namespace ProfileSelect.Areas.Admin.Controllers
                             student.LastName = фамиилия;
                             student.Patronymic = отчество;
                             student.FullName = String.Format("{0} {1} {2}", фамиилия, имя, отчество);
-                            student.Number = номерБилета;
+                            student.Number = личныйНомер;
+                            student.IsActive = true;
+                            student.CurrentGroup = group;
+                            student.Status = статус;
+                            student.StatusComm = статусКом;
                             //dbContext.ProfilePrioritys.RemoveRange(student.ProfilePrioritys);
                             dbContext.SaveChanges();
                         }
-                        student.IsActive = !статус.Contains("отчислен");
-                        student.CurrentGroup = group;
+                        
 
-                        if (целевик.Contains("Да"))
-                        {
-                            var status = dbContext.Statuses.First(s => s.Name == "Целевой");
-                            student.Status = status;
-                        }
-                        if (мо.Contains("МО"))
-                        {
-                            var status = dbContext.Statuses.First(s => s.Name == "МО");
-                            student.Status = status;
-                        }
-                        if (статус.Contains("академический отпуск")||статус.Contains("возможный"))
-                        {
-                            var status = dbContext.Statuses.First(s => s.Name == "Не беспокоить");
-                            student.Status = status;
-                            if (статус.Contains("академический отпуск"))
-                            {
-                                student.StatusComm = "Академический отпуск";
-                            }
-                            if (статус.Contains("возможный"))
-                            {
-                                student.StatusComm = "Возможный";
-                            }
-                        }
+                        //if (целевик.Contains("Да"))
+                        //{
+                        //    var status = dbContext.Statuses.First(s => s.Name == "Целевой");
+                        //    student.Status = status;
+                        //}
+                        //if (мо.Contains("МО"))
+                        //{
+                        //    var status = dbContext.Statuses.First(s => s.Name == "МО");
+                        //    student.Status = status;
+                        //}
+                        //if (статус.Contains("академический отпуск")||статус.Contains("возможный"))
+                        //{
+                        //    var status = dbContext.Statuses.First(s => s.Name == "Не беспокоить");
+                        //    student.Status = status;
+                        //    if (статус.Contains("академический отпуск"))
+                        //    {
+                        //        student.StatusComm = "Академический отпуск";
+                        //    }
+                        //    if (статус.Contains("возможный"))
+                        //    {
+                        //        student.StatusComm = "Возможный";
+                        //    }
+                        //}
                         //if (student.Status == null)
                         //{
                         //    var status = dbContext.Statuses.First(s => s.Name == "Обычный");

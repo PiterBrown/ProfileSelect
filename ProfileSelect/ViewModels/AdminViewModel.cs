@@ -8,5 +8,7 @@ namespace ProfileSelect.ViewModels
         public int GroupId { get; set; }
         public List<StudentViewModel> Students { get; set; }
         public List<GroupViewModel> Groups { get; set; }
+        public List<StatusViewModel> Status { get; set; }
+        public int StatusSelectId { get; set; }
     }
 }

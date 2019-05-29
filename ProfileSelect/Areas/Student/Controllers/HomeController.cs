@@ -80,7 +80,29 @@ namespace ProfileSelect.Areas.Student.Controllers
                         DepartmentName = pp.Profile.Department.FullName,
                         ProfileName = pp.Profile.Name,
                         Priority = pp.Priority
-                    }).ToList()
+                    }).ToList(),
+                    BlockPriorities = user.BlockPrioritys.OrderBy(cp => cp.Priority).Select(cp => new BlockPriorityViewModel
+                    {
+                        Id = cp.Id,
+                        Priority = cp.Priority
+                    }).ToList(),
+                    Profiles = dbContext.Profiles.Where(p=>!p.IsDeleted).OrderBy(p => p.Direction.Id).Select(p => new ProfileViewModel
+                    {
+                        Id= p.Id,
+                        DepartmentId = p.Department.Id,
+                        DirectionId = p.Direction.Id,
+                        Name = p.Name
+                    }).ToList(),
+                    BlockComps = dbContext.BlockComps.OrderBy(bc=>bc.Block.Profile.Id).Select(bc=> new BlockCompViewModel
+                    {
+                        BlockCompId = bc.Id,
+                        BlockId = bc.Block.Id,
+                        ProfileId = bc.Block.Profile.Id,
+                        SubjectsId = bc.Subject.Id,
+                        SubjectName = bc.Subject.Name,
+                        DirectionId = bc.Block.Profile.Direction.Id
+                    }).ToList(),
+                    Direction=user.Direction.Id
                 });
             }
         }
@@ -94,13 +116,45 @@ namespace ProfileSelect.Areas.Student.Controllers
                 user.ClaimNumber++;
                 foreach (var pp in claimViewModel.ProfilePriorities)
                 {
-                    var profilePrioritiy = dbContext.ProfilePrioritys.First(p => p.Id == pp.Id);
-                    profilePrioritiy.Priority = pp.Priority;
+                    var profilePriorities = dbContext.ProfilePrioritys.Add(new ProfilePriority
+                    {
+                        Student = user,
+                        Profile = dbContext.Profiles.First(u=>u.Id==pp.Id),
+                        Priority = pp.Priority
+                    });
                 }
+
+                foreach (var cp in claimViewModel.BlockPriorities)
+                {
+                    var blockPriorities = dbContext.BlockPrioritys.Add(new BlockPriority
+                    {
+                        Student = user,
+                        Block = dbContext.Blocks.First(u=>u.Id==cp.Id),
+                        Priority=cp.Priority
+                    });
+                }
+                //foreach (var pp in claimViewModel.ProfilePriorities)
+                //{
+                //    var profilePrioritiy = dbContext.ProfilePrioritys.First(p => p.Id == pp.Id);
+                //    profilePrioritiy.Priority = pp.Priority;
+                //}
                 dbContext.SaveChanges();
 
                 var profilePrioritiys = user.ProfilePrioritys.ToList();
+                var blockPrioritiys = user.BlockPrioritys.ToList();
                 var templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон.docx");
+                if (user.Direction.Id == 1)
+                {
+                    templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090301.docx");
+                };
+                if (user.Direction.Id == 2)
+                {
+                    templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090303.docx");
+                };
+                if (user.Direction.Id == 3)
+                {
+                    templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090304.docx");
+                };
                 var tempDocxPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.docx");
                 var tempPdfPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.pdf");
                 using (var memoryStream = new MemoryStream())
@@ -113,34 +167,95 @@ namespace ProfileSelect.Areas.Student.Controllers
                         var body = doc.MainDocumentPart.Document.Body;
                         var texts = body.Descendants<Text>().ToList();
 
-                        var table = doc.MainDocumentPart.Document.Descendants<Table>().ToList().First();
-                        var i = 1;
-                        foreach (var profilePriority in profilePrioritiys)
-                        {
-                            var tr = new TableRow();
+                        //var table = doc.MainDocumentPart.Document.Descendants<Table>().ToList().First();
+                        //var i = 1;
+                        //var tr1 = new TableRow();   
+                        //var tc1 = new Word.TableCell();
+                        //tc1.Append(new TableCellProperties(new VerticalMerge() { Val = MergedCellValues.Restart }));
+                        //var tc2 = new TableCell();
+                        //tc2.Append(new TableCellProperties(new VerticalMerge() { Val = MergedCellValues.Continue }));
+                        //tr1.Append(tc1,tc2);
+                        //table.Append(tr1);
+                        // var tr3 = new TableRow();
+                        // //tr.Append(new TableRowProperties(new GridAfter() { Val = 2 }));
 
-                            var indexCell = new TableCell();
-                            indexCell.Append(new Paragraph(new Run(new Text(i.ToString()))));
+                        // var Cell1 = new TableCell();
+                        //// tr1.Append(new TableRowProperties(new CellMerge() { Val = 2 }));
+                        // Cell1.Append(new Paragraph(new Run(new Text("1"))));
+                        // var Cell2 = new TableCell();
+                        // Cell2.Append(new Paragraph(new Run(new Text("2"))));
 
-                            var departmentCell = new TableCell();
-                            departmentCell.Append(new Paragraph(new Run(new Text(profilePriority.Profile.Department.FullName))));
+                        // tr3.Append(Cell1);
+                        // tr2.Append(Cell2);
+                        // tr1.Append(tr2)
+                        // tr3.Append(tr1, tr2);
+                        // table.Append(tr3);
+                        //doc.MainDocumentPart.Document.Body.Append(table);
 
-                            var profileCell = new TableCell();
-                            profileCell.Append(new Paragraph(new Run(new Text(profilePriority.Profile.Name))));
+                        
+                        //doc.MainDocumentPart.Document.Save();
+                        //    table.AppendChild(tr);
+                        //foreach (var profilePriority in profilePrioritiys)
+                        //{
+                        //    var tr = new TableRow();
+                        //    tr.Append(new TableRowProperties(new GridAfter() { Val=2}));
 
-                            var priorityCell = new TableCell();
-                            priorityCell.Append(new Paragraph(new Run(new Text(profilePriority.Priority.ToString()))));
+                        //    var indexCell = new TableCell();
+                        //    //indexCell.Append(new TableCellProperties(new GridSpan() { Val = 2 }));
+                        //    indexCell.Append(new Paragraph(new Run(new Text(i.ToString()))));
 
-                            tr.Append(indexCell, departmentCell, profileCell, priorityCell);
-                            table.AppendChild(tr);
-                            i++;
-                        }
+                        //    var departmentCell = new TableCell();
+                        //    departmentCell.Append(new Paragraph(new Run(new Text(profilePriority.Profile.Department.FullName))));
+
+                        //    var profileCell = new TableCell();
+                        //    profileCell.Append(new Paragraph(new Run(new Text(profilePriority.Profile.Name))));
+
+                        //    var priorityCell = new TableCell();
+                        //    priorityCell.Append(new Paragraph(new Run(new Text(profilePriority.Priority.ToString()))));
+
+                        //    tr.Append(indexCell, departmentCell, profileCell, priorityCell);
+                        //    table.AppendChild(tr);
+                        //    i++;
+                        //}
 
                         texts.First(t => t.Text == "ФИО").Text = string.Format("{0} {1} {2}", user.LastName, user.FirstName, user.Patronymic);
                         texts.First(t => t.Text == "Номер_группы").Text = user.CurrentGroup.Name;//NewGroup?.Name ?? "";
                         texts.First(t => t.Text == "Номер_направления").Text = user.Direction.Code;
                         texts.First(t => t.Text == "Название_направления").Text = user.Direction.Name;
                         texts.First(t => t.Text == "Дата_заполнения").Text = DateTime.Now.ToString("d");
+                        if (user.Direction.Id == 1)
+                        {
+                            texts.First(t => t.Text == "Проф1").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 1).Priority.ToString();
+                            texts.First(t => t.Text == "Проф3").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 3).Priority.ToString();
+                            texts.First(t => t.Text == "Проф4").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 4).Priority.ToString();
+                            texts.First(t => t.Text == "Бл1").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 1).Priority.ToString();
+                            texts.First(t => t.Text == "Бл2").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 2).Priority.ToString();
+                            texts.First(t => t.Text == "Бл3").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 3).Priority.ToString();
+                            texts.First(t => t.Text == "Бл4").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 4).Priority.ToString();
+                            texts.First(t => t.Text == "Бл5").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 5).Priority.ToString();
+                            texts.First(t => t.Text == "Бл6").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 6).Priority.ToString();
+                            texts.First(t => t.Text == "Бл7").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 7).Priority.ToString();
+                        }
+                        if (user.Direction.Id == 2)
+                        {
+                            texts.First(t => t.Text == "Проф5").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 5).Priority.ToString();
+                            texts.First(t => t.Text == "Проф11").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 11).Priority.ToString();
+                            texts.First(t => t.Text == "Бл8").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 8).Priority.ToString();
+                            texts.First(t => t.Text == "Бл9").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 9).Priority.ToString();
+                            texts.First(t => t.Text == "Бл10").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 10).Priority.ToString();
+                            texts.First(t => t.Text == "Бл11").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 11).Priority.ToString();
+                            texts.First(t => t.Text == "Бл12").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 12).Priority.ToString();
+                            texts.First(t => t.Text == "Бл13").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 13).Priority.ToString();
+                        }
+                        if (user.Direction.Id == 3)
+                        {
+                            texts.First(t => t.Text == "Проф6").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 6).Priority.ToString();
+                            texts.First(t => t.Text == "Проф7").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 7).Priority.ToString();
+                            texts.First(t => t.Text == "Проф8").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 8).Priority.ToString();
+                            texts.First(t => t.Text == "Проф9").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 9).Priority.ToString();
+                            texts.First(t => t.Text == "Бл14").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 14).Priority.ToString();
+                            texts.First(t => t.Text == "Бл15").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 15).Priority.ToString();
+                        }
                     }
 
                     using (FileStream file = new FileStream(tempDocxPath, FileMode.Create, FileAccess.Write))

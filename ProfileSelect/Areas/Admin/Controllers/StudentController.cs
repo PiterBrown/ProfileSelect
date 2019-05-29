@@ -71,6 +71,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
 
                 var student = dbCotext.Users.Add(new ApplicationUser
                 {
+                    
                     UserName = studentViewModel.UserName,
                     FirstName = studentViewModel.FirstName,
                     LastName = studentViewModel.LastName,

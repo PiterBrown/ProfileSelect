@@ -3,7 +3,7 @@ namespace ProfileSelect.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class _1 : DbMigration
     {
         public override void Up()
         {
@@ -27,11 +27,11 @@ namespace ProfileSelect.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Department_Id = c.Int(nullable: false),
-                        Profile_Id = c.String(nullable: false, maxLength: 128),
+                        Profile_Id = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Departments", t => t.Department_Id, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.Profile_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Profiles", t => t.Profile_Id, cascadeDelete: true)
                 .Index(t => t.Department_Id)
                 .Index(t => t.Profile_Id);
             
@@ -79,6 +79,8 @@ namespace ProfileSelect.Migrations
                         Number = c.String(),
                         IsActive = c.Boolean(nullable: false),
                         StatusComm = c.String(),
+                        IsBusy = c.Boolean(nullable: false),
+                        BusyReason = c.String(),
                         NewProfile_Id = c.Int(),
                         IsDeleted = c.Boolean(nullable: false),
                         CreateDate = c.DateTime(nullable: false),
@@ -170,7 +172,7 @@ namespace ProfileSelect.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Departments", t => t.BaseDepartment_Id)
-                .ForeignKey("dbo.Departments", t => t.Department_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Departments", t => t.Department_Id)
                 .ForeignKey("dbo.Directions", t => t.Direction_Id, cascadeDelete: true)
                 .Index(t => t.BaseDepartment_Id)
                 .Index(t => t.Department_Id)
@@ -252,7 +254,7 @@ namespace ProfileSelect.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.BlockComps", "Subject_Id", "dbo.Subjects");
             DropForeignKey("dbo.BlockComps", "Block_Id", "dbo.Blocks");
-            DropForeignKey("dbo.Blocks", "Profile_Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Blocks", "Profile_Id", "dbo.Profiles");
             DropForeignKey("dbo.Blocks", "Department_Id", "dbo.Departments");
             DropForeignKey("dbo.Groups", "Status_Id", "dbo.Status");
             DropForeignKey("dbo.Groups", "Direction_Id", "dbo.Directions");

@@ -48,7 +48,7 @@
                         <li><a data-item="dep" href="@Url.Action("Departments", "Home", new {Area="Admin"})">Кафедры</a></li>
                         <li><a data-item="dir" href="@Url.Action("Directions", "Home", new {Area="Admin"})">Специальности</a></li>
                         <li><a data-item="prof" href="@Url.Action("Profiles", "Home", new {Area="Admin"})">Направления специальностей</a></li>
-                        //<li><a data-item="subj" href="@Url.Action("Subjects", "Home", new {Area="Admin"})">Предметы</a></li>
+                        <li><a data-item="subj" href="@Url.Action("Subjects", "Home", new {Area="Admin"})">Предметы</a></li>
                         <li><a data-item="stat" href="@Url.Action("Statuses", "Home", new {Area="Admin"})">Статусы</a></li>
                         <li><a data-item="groups" href="@Url.Action("Groups", "Home", new {Area="Admin"})">Группы</a></li>
                     }
@@ -60,6 +60,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="modal-footer">
         <footer>
             <p>&copy; @DateTime.Now.Year - Система распределения студентов. Институт информационных технологий</p>
         </footer>
