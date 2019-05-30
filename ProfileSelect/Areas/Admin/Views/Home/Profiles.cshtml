@@ -18,10 +18,14 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-            {
+        @{ var i = 0;}
+        @foreach (var item in Model.OrderBy(m=>m.DirectionName))
+        {
             <tr>
-                <td>@item.Id</td>
+                @{
+                    i++;
+                    <td>@i</td>
+                }
                 <td>@item.Name</td>
                 <td>@item.DirectionName</td>
                 <td>@item.DepartmentName</td>

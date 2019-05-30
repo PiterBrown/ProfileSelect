@@ -44,18 +44,25 @@
                             <input type="hidden" name="BlockPriorities[@m].Id" value="@bl.Key" />
                             if (k == 0)
                             {
-                                <tr>
-                                    <td rowspan="@rowcountBlock">@cl.Name</td>
+                            <tr>
+                                <td rowspan="@rowcountBlock">@cl.Name</td>
+                                @if (rowcountProfile != 1)
+                                {
                                     <td rowspan="@rowcountBlock"><input type="number" min="1" max="@rowcountProfile" class="form-control user-selected-number profile-priority" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
-                                    <td>
-                                        <ul>
-                                            @foreach (var s in bl.Where(b => b.DirectionId == cl.DirectionId))
-                                            {
-                                                <li>@s.SubjectName</li>}
-                                        </ul>
-                                    </td>
-                                    <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
-                                </tr>
+                                }
+                                else
+                                {
+                                    <th rowspan="@rowcountBlock">НЕ ПРИМЕНИМО</th>
+                                }
+                                <td>
+                                    <ul>
+                                        @foreach (var s in bl.Where(b => b.DirectionId == cl.DirectionId))
+                                        {
+                                            <li>@s.SubjectName</li>}
+                                    </ul>
+                                </td>
+                                <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
+                            </tr>
 
                             }
                             else

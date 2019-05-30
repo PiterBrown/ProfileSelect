@@ -6,28 +6,45 @@
 
 <div class="table-responsive col-md-12">
     <a href="@Url.Action("Add", "Groups", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Добавить группу</a>
-    <table class="table table-bordered">
+    <table id="groups-table" class="table table-bordered">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Название</th>
-                <th>Специализация</th>
+                <th>Направление</th>
                 <th>Кафедра</th>
-                <th>Статус</th>
+                <th>Не участвует в распределении</th>
                 <th>Количество</th>
                 <th>Действия</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @{ var i = 0;}
+            @foreach (var item in Model.OrderBy(m=>m.DirectionName))
             {
                 <tr>
-                    <td>@item.Id</td>
+                    @{
+                        i++;
+                        <td>@i</td>
+                    }
                     <td>@item.Name</td>
                     <td>@item.DirectionName</td>
                     <td>@item.DepartmentName</td>
-                    <td>@item.StatusName</td>
-                    <td>@item.Count</td>
+                    <td>
+                        <div class="form-horizontal" style="margin-left: 10px;">
+                            <div class="form-group">
+                                <input type="checkbox" class="is-bisy-chk user-selected-number" @(item.IsDist ? "checked=''" : "") data-id="@item.Id" />Не участвует
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-horizontal" style="margin-left: 20px; width: 30px">
+                            <div class="form-group">
+                                <input type="number" class="count-txt form-control" data-id="@item.Id" value="@item.Count" />
+
+                            </div>
+                        </div>
+                    </td>
                     <td>
                         <div id="navigation">
                             <ul>
@@ -41,3 +58,78 @@
         </tbody>
     </table>
 </div>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#groups-table').DataTable({
+            language: rus_lang,
+            responsive: true,
+            columnDefs: [
+                {
+                    targets: [0],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [1],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [2],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [3],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [4],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [5],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [6],
+                    responsivePriority: 1
+                },
+                {
+                    targets: [7],
+                    responsivePriority: 1
+                }
+
+                
+            ]
+        });
+        $('.is-bisy-chk').change(function () {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SetIsBusy", "Groups", new {Area="Admin"})',
+                data: JSON.stringify({
+                    id: $(this).data('id'),
+                    isDistr: $(this).is(':checked')
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    toastr.info(response.Message);
+                }
+            });
+        });
+         $('.count-txt').change(function() {
+                  $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetCountText", "Groups", new {Area="Admin"})',
+                    data: JSON.stringify({
+                        id: $(this).data('id'),
+                        Number: $(this).val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                      toastr.info(response.Message);
+                    }
+                  });
+                });
+    </script>
+}

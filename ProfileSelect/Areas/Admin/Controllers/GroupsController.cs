@@ -23,17 +23,17 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Id = d.Id,
                     Name = d.Name
                 }).ToList();
-                var statuses = dbContext.Statuses.Select(s => new StatusViewModel
-                {
-                    Id = s.Id,
-                    Name = s.Name
-                }).ToList();
+                //var statuses = dbContext.Statuses.Select(s => new StatusViewModel
+                //{
+                //    Id = s.Id,
+                //    Name = s.Name
+                //}).ToList();
 
                 return View(new GroupViewModel
                 {
                     Departments = departments,
                     Directions = directions,
-                    Statuses = statuses
+                    //Statuses = statuses
                 });
             }
         }
@@ -49,7 +49,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
             {
                 var department = dbCotext.Departments.First(d => d.Id == groupViewModel.DepartmentId);
                 var direction = dbCotext.Directions.First(d => d.Id == groupViewModel.DirectionId);
-                var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
+                //var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
 
                 dbCotext.Groups.Add(new Group
                 {
@@ -57,7 +57,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Count = groupViewModel.Count,
                     Department = department,
                     Direction = direction,
-                    Status = status
+                    //Status = status
                 });
                 dbCotext.SaveChanges();
                 return RedirectToAction("Groups", "Home", new { Area = "Admin" });
@@ -92,7 +92,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Name = groups.Name,
                     DepartmentId = groups.Department.Id,
                     DirectionId = groups.Direction.Id,
-                    StatusId = groups.Status.Id,
+                    //StatusId = groups.Status.Id,
                     Departments = departments,
                     Directions = directions,
                     Statuses = statuses
@@ -111,13 +111,13 @@ namespace ProfileSelect.Areas.Admin.Controllers
             {
                 var department = dbCotext.Departments.First(d => d.Id == groupViewModel.DepartmentId);
                 var direction = dbCotext.Directions.First(d => d.Id == groupViewModel.DirectionId);
-                var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
+                //var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
                 var gropus = dbCotext.Groups.First(d => d.Id == groupViewModel.Id);
                 gropus.Name = groupViewModel.Name;
                 gropus.Count = groupViewModel.Count;
                 gropus.Department = department;
                 gropus.Direction = direction;
-                gropus.Status = status;
+                //gropus.Status = status;
 
                 dbCotext.SaveChanges();
                 return RedirectToAction("Groups", "Home", new { Area = "Admin" });
@@ -132,6 +132,41 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 groups.IsDeleted = true;
                 dbCotext.SaveChanges();
                 return RedirectToAction("Groups", "Home", new { Area = "Admin" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SetIsBusy(int id, bool isDistr)
+        {
+            using (var dbCotext = new ApplicationDbContext())
+            {
+                var group = dbCotext.Groups.First(s => s.Id == id);
+                group.IsDistr = isDistr;
+                dbCotext.SaveChanges();
+
+                var message = string.Format("Статус {0} для {1} сохранен", isDistr ? "Не участвует" : "Участвует",
+                    group.Name);
+                return Json(new
+                {
+                    Message = message
+                });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SetCountText(int id, int Number)
+        {
+            using (var dbCotext = new ApplicationDbContext())
+            {
+                var groups = dbCotext.Groups.First(d => d.Id == id);
+                groups.Count = Number;
+                dbCotext.SaveChanges();
+
+                var message = string.Format("Численность для группы {0} сохранена", groups.Name);
+                return Json(new
+                {
+                    Message = message
+                });
             }
         }
     }

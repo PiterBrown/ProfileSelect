@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<ProfileSelect.ViewModels.DirectionViewModel>
 @{
     Layout = "~/Views/Shared/_BaseLayout.cshtml";
-    ViewBag.Title = "Специальности";
+    ViewBag.Title = "Направления";
 }
 
 <div class="table-responsive col-md-6">
-    <a href="@Url.Action("Add", "Direction", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Добавить специальность</a>
+    <a href="@Url.Action("Add", "Direction", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Добавить направление</a>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -16,10 +16,14 @@
             </tr>
         </thead>
         <tbody>
+            @{ var i = 0;}
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Id</td>
+                    @{ 
+                        i++;
+                        <td>@i</td>
+                    }
                     <td>@item.Code</td>
                     <td>@item.Name</td>
                     <td>

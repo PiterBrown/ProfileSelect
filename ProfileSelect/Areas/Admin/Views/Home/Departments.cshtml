@@ -12,15 +12,19 @@
                 <th>#</th>
                 <th>Полное наименование</th>
                 <th>Короткое наименование</th>
-                <th>Компания</th>
+                <th>БК</th>
                 <th>Действия</th>
             </tr>
         </thead>
         <tbody>
+            @{ var i = 0;}
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Id</td>
+                    @{
+                        i++;
+                        <td>@i</td>
+                    }
                     <td>@item.FullName</td>
                     <td>@item.ShortName</td>
                     <td>@(item.IsCompany ? "Да" : "Нет")</td>

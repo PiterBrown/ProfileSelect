@@ -19,17 +19,8 @@
                 {
             <div class="col-md-3 col-md-offset-1">
                 <input type="submit" value="Распределить по группам" class="btn btn-primary pull-left" /><br /><br />
-                <input type="radio" name="scoreMethod" value="Пересчет баллов" checked="checked">Пересчет баллов<br />
-                <input type="radio" name="scoreMethod" value="Средний балл">Средний балл
             </div>
                 }
-            @*<div class="col-md-2">
-            <input type="radio" name="score" value="Пересчет баллов" checked="checked">Пересчет баллов
-            <input type="radio" name="score" value="Средний балл">Средний балл
-        </div>
-        <div class="col-md-2">
-            <a href="@Url.Action("FillGroups", "Home", new {Area = "Admin"})" class="btn btn-primary pull-left">Распределить по группам</a>
-        </div>*@
             <div class="col-md-2 col-md-offset-1">
                 <a href="@Url.Action("ConfirmUserGroups", "Home", new {Area="Admin"})" class="btn btn-primary pull-left">Утвердить группы</a>
             </div>

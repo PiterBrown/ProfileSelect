@@ -176,7 +176,8 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Count = g.Count,
                     DepartmentName = g.Department.FullName,
                     DirectionName = g.Direction.Name,
-                    StatusName = g.Status.Name
+                    IsDist = g.IsDistr
+                    //StatusName = g.Status.Name
                 }).ToList();
                 return View(groups);
             }

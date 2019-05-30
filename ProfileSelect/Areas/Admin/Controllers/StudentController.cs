@@ -5,6 +5,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using ProfileSelect.Models;
 using ProfileSelect.ViewModels;
+using Translate;
+using System.Web.Security;
 using Constants = ProfileSelect.Migrations.Constants;
 
 namespace ProfileSelect.Areas.Admin.Controllers
@@ -68,27 +70,42 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 var currentGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.CurrentGroupId);
                 var previewGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.PreviewGroupId);
                 var newGroup = dbCotext.Groups.FirstOrDefault(d => d.Id == studentViewModel.NewGroupId);
+                var login = studentViewModel.LastName.ToLower();
+                if (studentViewModel.FirstName.Any())
+                {
+                    login += studentViewModel.FirstName.ToLower()[0];
+                }
+                if (studentViewModel.Patronymic.Any())
+                {
+                    login += studentViewModel.Patronymic.ToLower()[0];
+                }
+                login = Transliteration.CyrillicToLatin(login);
+                var loginCount = dbCotext.Users.Count(s => s.UserName.Contains(login));
+                if (loginCount > 0)
+                {
+                    login += loginCount;
+                }
 
                 var student = dbCotext.Users.Add(new ApplicationUser
                 {
                     
-                    UserName = studentViewModel.UserName,
+                    UserName = login,
                     FirstName = studentViewModel.FirstName,
                     LastName = studentViewModel.LastName,
                     Patronymic = studentViewModel.Patronymic,
-                    FullName = studentViewModel.FullName,
+                    FullName = studentViewModel.LastName+" "+studentViewModel.FirstName+" "+ studentViewModel.Patronymic,
                     Number = studentViewModel.Number,
                     StatusComm = studentViewModel.StatusComm,
                     Status = status,
                     CurrentGroup = currentGroup,
-                    PreviewGroup = previewGroup,
-                    NewGroup = newGroup,
-                    Direction = direction,
-                    NewProfile = profile,
+                    //PreviewGroup = previewGroup,
+                    //NewGroup = newGroup,
+                    Direction = currentGroup.Direction,
+                    //NewProfile = profile,
                     CreateDate = DateTime.Now,
                     ValidUntil = studentViewModel.ValidUntil,
                     EmailConfirmed = true,
-                    PasswordHash = studentViewModel.Password,
+                    PasswordHash = Membership.GeneratePassword(6, 1),
                     SecurityStamp = ""
                 });
                 dbCotext.SaveChanges();
@@ -159,7 +176,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
             }
             using (var dbCotext = new ApplicationDbContext())
             {
-                var direction = dbCotext.Directions.First(d => d.Id == studentViewModel.DirectionId);
+                var direction = dbCotext.Groups.First(d => d.Id== studentViewModel.CurrentGroupId).Direction;
                 var status = dbCotext.Statuses.First(d => d.Id == studentViewModel.StatusId);
                 var profile = dbCotext.Profiles.FirstOrDefault(d => d.Id == studentViewModel.NewProfileId);
                 var currentGroup = dbCotext.Groups.First(d => d.Id == studentViewModel.CurrentGroupId);
@@ -177,16 +194,16 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 student.FirstName = studentViewModel.FirstName;
                 student.LastName = studentViewModel.LastName;
                 student.Patronymic = studentViewModel.Patronymic;
-                student.FullName = studentViewModel.FullName;
+                student.FullName = studentViewModel.LastName + " " + studentViewModel.FirstName + " " + studentViewModel.Patronymic;
                 student.Number = studentViewModel.Number;
                 student.StatusComm = studentViewModel.StatusComm;
                 student.Status = status;
                 student.CurrentGroup = currentGroup;
-                student.PreviewGroup = previewGroup;
-                student.NewGroup = newGroup;
-                student.Direction = direction;
-                student.NewProfile = profile;
-                student.NewProfileId = studentViewModel.NewProfileId;
+                //student.PreviewGroup = previewGroup;
+                //student.NewGroup = newGroup;
+                student.Direction = currentGroup.Direction;
+                //student.NewProfile = profile;
+                //student.NewProfileId = studentViewModel.NewProfileId;
                 student.ValidUntil = studentViewModel.ValidUntil;
                 student.PasswordHash = studentViewModel.Password;
                 dbCotext.SaveChanges();

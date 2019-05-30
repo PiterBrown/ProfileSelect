@@ -3,10 +3,10 @@
     Layout = "~/Views/Shared/_BaseLayout.cshtml";
     ViewBag.Title = "Добавить студента";
     var previewGroupsList = new List<SelectListItem> {new SelectListItem
-                {
-                    Value = "",
-                    Text = ""
-                } };
+        {
+            Value = "",
+            Text = ""
+        } };
     previewGroupsList.AddRange(Model.Groups.Select(d => new SelectListItem
     {
         Text = d.Name,
@@ -42,47 +42,47 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-md-2">Имя</label>
+        <label class="control-label col-md-2">Фамилия</label>
         <div class="col-md-4">
-            @Html.TextBoxFor(x => x.FirstName, new {@class = "form-control", required=""})
+            @Html.TextBoxFor(x => x.LastName, new { @class = "form-control", required = "" })
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-md-2">Фамилия</label>
+        <label class="control-label col-md-2">Имя</label>
         <div class="col-md-4">
-            @Html.TextBoxFor(x => x.LastName, new {@class = "form-control", required = "" })
+            @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control", required = "" })
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-md-2">Отчество</label>
         <div class="col-md-4">
-            @Html.TextBoxFor(x => x.Patronymic, new {@class = "form-control", required = "" })
+            @Html.TextBoxFor(x => x.Patronymic, new { @class = "form-control", required = "" })
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Полное имя</label>
-        <div class="col-md-4">
-            @Html.TextBoxFor(x => x.FullName, new {@class = "form-control"})
-        </div>
-    </div>
+    @*<div class="form-group">
+            <label class="control-label col-md-2">Полное имя</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.FullName, new {@class = "form-control"})
+            </div>
+        </div>*@
     <div class="form-group">
         <label class="control-label col-md-2">Номер</label>
         <div class="col-md-4">
-            @Html.TextBoxFor(x => x.Number, new {@class = "form-control"})
+            @Html.TextBoxFor(x => x.Number, new { @class = "form-control", required = "" })
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Логин</label>
-        <div class="col-md-4">
-            @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", required="" })
+    @*<div class="form-group">
+            <label class="control-label col-md-2">Логин</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.UserName, new { @class = "form-control"})
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Пароль</label>
-        <div class="col-md-4">
-            @Html.TextBoxFor(x => x.Password, new { @class = "form-control", required = "" })
-        </div>
-    </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Пароль</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Password, new { @class = "form-control"})
+            </div>
+        </div>*@
     <div class="form-group">
         <label class="control-label col-md-2">Дата окончания действия пароля</label>
         <div class="col-md-4">
@@ -105,7 +105,7 @@
     <div class="form-group">
         <label class="control-label col-md-2">Комментарии статуса</label>
         <div class="col-md-4">
-            @Html.TextBoxFor(x => x.StatusComm, new {@class = "form-control"})
+            @Html.TextBoxFor(x => x.StatusComm, new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
@@ -121,52 +121,52 @@
             @Html.DropDownListFor(x => x.CurrentGroupId, new SelectList(currentGroupsList, "Value", "Text", Model.CurrentGroupId), new { @class = "form-control", required = "" })
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Предварительная группа</label>
-        <div class="col-md-4">
-            @Html.DropDownListFor(x => x.PreviewGroupId, new SelectList(previewGroupsList, "Value", "Text", Model.PreviewGroupId), new { @class = "form-control" })
+    @*<div class="form-group">
+            <label class="control-label col-md-2">Предварительная группа</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.PreviewGroupId, new SelectList(previewGroupsList, "Value", "Text", Model.PreviewGroupId), new { @class = "form-control" })
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Новая группа</label>
-        <div class="col-md-4">
-            @Html.DropDownListFor(x => x.NewGroupId, new SelectList(previewGroupsList, "Value", "Text", Model.NewGroupId), new { @class = "form-control" })
+        <div class="form-group">
+            <label class="control-label col-md-2">Новая группа</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.NewGroupId, new SelectList(previewGroupsList, "Value", "Text", Model.NewGroupId), new { @class = "form-control" })
+            </div>
+        </div>*@
+    @*<div class="form-group">
+            <label class="control-label col-md-2">Специализация</label>
+            <div class="col-md-4">
+                @{
+                    var directionList = Model.Directions.Select(d => new
+                    {
+                        Text = d.Name,
+                        Value = d.Id
+                    });
+                }
+                @Html.DropDownListFor(x => x.DirectionId, new SelectList(directionList, "Value", "Text", Model.DirectionId), new { @class = "form-control" })
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Специализация</label>
-        <div class="col-md-4">
-            @{
-                var directionList = Model.Directions.Select(d => new
-                {
-                    Text = d.Name,
-                    Value = d.Id
-                });
+        <div class="form-group">
+            <label class="control-label col-md-2">Направление специализации</label>
+            <div class="col-md-4">
+               @{
+                   var profilesList = new List<SelectListItem> {new SelectListItem
+                    {
+                        Value = "",
+                        Text = ""
+                    } };
+                   profilesList.AddRange(Model.Profiles.Select(d => new SelectListItem
+                   {
+                       Text = d.Name,
+                       Value = d.Id.ToString()
+                   }));
             }
-            @Html.DropDownListFor(x => x.DirectionId, new SelectList(directionList, "Value", "Text", Model.DirectionId), new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-md-2">Направление специализации</label>
-        <div class="col-md-4">
-           @{
-               var profilesList = new List<SelectListItem> {new SelectListItem
-                {
-                    Value = "",
-                    Text = ""
-                } };
-               profilesList.AddRange(Model.Profiles.Select(d => new SelectListItem
-               {
-                   Text = d.Name,
-                   Value = d.Id.ToString()
-               }));
-        }
-        @Html.DropDownListFor(x => x.NewProfileId, new SelectList(profilesList, "Value", "Text", Model.NewProfileId), new { @class = "form-control" })
-        </div>
-    </div>
+            @Html.DropDownListFor(x => x.NewProfileId, new SelectList(profilesList, "Value", "Text", Model.NewProfileId), new { @class = "form-control" })
+            </div>
+        </div>*@
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-primary pull-left" value="Добавить"/>
+            <input type="submit" class="btn btn-primary pull-left" value="Добавить" />
         </div>
     </div>
 }

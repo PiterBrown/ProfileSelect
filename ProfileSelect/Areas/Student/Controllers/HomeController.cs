@@ -155,6 +155,10 @@ namespace ProfileSelect.Areas.Student.Controllers
                 {
                     templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090304.docx");
                 };
+                if (user.Direction.Id == 5)
+                {
+                    templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон010304.docx");
+                };
                 var tempDocxPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.docx");
                 var tempPdfPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.pdf");
                 using (var memoryStream = new MemoryStream())
@@ -255,6 +259,11 @@ namespace ProfileSelect.Areas.Student.Controllers
                             texts.First(t => t.Text == "Проф9").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 9).Priority.ToString();
                             texts.First(t => t.Text == "Бл14").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 14).Priority.ToString();
                             texts.First(t => t.Text == "Бл15").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 15).Priority.ToString();
+                        }
+                        if (user.Direction.Id == 5)
+                        {
+                            texts.First(t => t.Text == "Бл19").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 19).Priority.ToString();
+                            texts.First(t => t.Text == "Бл20").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 20).Priority.ToString();
                         }
                     }
 

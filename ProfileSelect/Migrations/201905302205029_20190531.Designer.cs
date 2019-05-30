@@ -7,13 +7,13 @@ namespace ProfileSelect.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class _1 : IMigrationMetadata
+    public sealed partial class _20190531 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(_1));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(_20190531));
         
         string IMigrationMetadata.Id
         {
-            get { return "201905231725145_1"; }
+            get { return "201905302205029_20190531"; }
         }
         
         string IMigrationMetadata.Source

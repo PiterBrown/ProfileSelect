@@ -48,7 +48,7 @@ namespace ProfileSelect
 
             modelBuilder.Entity<Group>().HasRequired(pi => pi.Direction);
             modelBuilder.Entity<Group>().HasRequired(pi => pi.Department);
-            modelBuilder.Entity<Group>().HasOptional(pi => pi.Status);
+            
 
             modelBuilder.Entity<Profile>().HasRequired(pi => pi.Direction);
             modelBuilder.Entity<Profile>().HasRequired(pi => pi.Department);
