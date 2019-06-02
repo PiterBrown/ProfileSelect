@@ -10,6 +10,9 @@ using ProfileSelect.Models;
 using ProfileSelect.ViewModels;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Table = DocumentFormat.OpenXml.Wordprocessing.Table;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
+
 
 namespace ProfileSelect.Areas.Student.Controllers
 {
@@ -145,7 +148,7 @@ namespace ProfileSelect.Areas.Student.Controllers
 
                 var profilePrioritiys = user.ProfilePrioritys.ToList();
                 var blockPrioritiys = user.BlockPrioritys.ToList();
-                var templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон.docx");
+                string templatePath = "";
                 if (user.Direction.Id == 1)
                 {
                     templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090301.docx");
@@ -282,11 +285,11 @@ namespace ProfileSelect.Areas.Student.Controllers
                 appWord.DisplayAlerts = WdAlertLevel.wdAlertsNone;
                 wordDocument.Close();
                 appWord.Quit();
-                if (wordDocument != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordDocument);
-                if (appWord != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(appWord);
-                GC.Collect();
+                //if (wordDocument != null)
+                //    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordDocument);
+                //if (appWord != null)
+                //    System.Runtime.InteropServices.Marshal.ReleaseComObject(appWord);
+               // GC.Collect();
 
                 using (var memoryStream = new MemoryStream())
                 {
@@ -301,5 +304,7 @@ namespace ProfileSelect.Areas.Student.Controllers
                 }
             }
         }
+        
+
     }
 }
