@@ -5,12 +5,12 @@
 }
 
 <div class="table-responsive col-md-12">
-    <h3 >Написать заявление №@Model.ClaimNuber</h3>
-    <h4 >Заполните форму, расставив приоритеты в порядке убывания, где 1 - самый приоритетный профиль или блок дисциплин</h4>
+    <h3 >Написать заявление @*№@Model.ClaimNuber*@</h3>
+    <h4 >Заполните форму, расставив приоритеты в порядке убывания, где 1 - самый приоритетный (желаемый) профиль или блок дисциплин</h4>
     <h4 ><strong>Внимание!</strong>
     <ul>
         <li>Приоритеты не могут повторяться в столбце "Приоритет профиля"</li>
-        <li>Приоритеты не могут повторяться в столбце "Приоритет дисциплин" среди строк, принадлежащих отдому профилю</li>
+        <li>Приоритеты не могут повторяться в столбце "Приоритет дисциплин" среди строк, принадлежащих одному профилю</li>
         </ul></h4>
     @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank", id = "send-data-form" }))
     {
@@ -27,17 +27,18 @@
                 var i = 0;
                 var m = 0;
                 var k = 0;
+               
             }
             @foreach (var cl in Model.Profiles.Where(p => p.DirectionId == Model.Direction))
             {
                 k = 0;
-                var rowcountBlock = Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).GroupBy(bc => bc.BlockId).Count();
+                var rowcountBlock = Model.BlockComps.Where(bc => bc.ProfileId == cl.Id && !bc.BlockIsDelete).GroupBy(bc => bc.BlockId).Count();
                 var rowcountProfile = Model.Profiles.Where(p => p.DirectionId == Model.Direction).Count();
                 <input type="hidden" name="ProfilePriorities[@i].Id" value="@cl.Id" />
-                if (Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).Any())
+                if (Model.BlockComps.Where(bc => bc.ProfileId == cl.Id && !bc.BlockIsDelete).Any())
                 {
                     <tbody class="block">
-                        @foreach (var bl in Model.BlockComps.Where(bc => bc.ProfileId == cl.Id).GroupBy(bc => bc.BlockId))
+                        @foreach (var bl in Model.BlockComps.Where(bc => bc.ProfileId == cl.Id && !bc.BlockIsDelete).GroupBy(bc => bc.BlockId))
                         {
 
 
@@ -52,7 +53,7 @@
                                 }
                                 else
                                 {
-                                    <th rowspan="@rowcountBlock">НЕ ПРИМЕНИМО</th>
+                                    <th rowspan="@rowcountBlock">НЕ ТРЕБУЕТСЯ</th>
                                 }
                                 <td>
                                     <ul>
@@ -61,7 +62,14 @@
                                             <li>@s.SubjectName</li>}
                                     </ul>
                                 </td>
-                                <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
+                                @if (rowcountBlock != 1)
+                                {
+                                    <td><input type="number" min="1" max="@rowcountBlock" class="form-control user-selected-number block-priority" style="width: 70px" name="BlockPriorities[@m].Priority" value="" /></td>
+                                }
+                                else
+                                {
+                                    <th>НЕ УКАЗЫВАТЬ</th>
+                                }
                             </tr>
 
                             }
@@ -94,14 +102,14 @@
                             <td>@cl.Name</td>
                             <td><input type="number" min="1" max="@rowcountProfile" class="form-control user-selected-number profile-priority" style="width: 70px" name="ProfilePriorities[@i].Priority" value="" /></td>
                             <th>НЕ ПРИМЕНИМО</th>
-                            <th>НЕ ПРИМЕНИМО</th>
+                            <th>НЕ УКАЗЫВАТЬ</th>
                         </tr>
                     </tbody>
                 }
                 i++;
             }
         </table>
-        <h4><strong>Внимание!</strong> Заявление необходимо распечатать, подписать и сдать преподавателю на зачете по Учебной практике! Без принесенного заявления Ваш выбор учитываться не будет!</h4><br>
+        <h4><strong>Внимание!</strong> Заявление необходимо распечатать, подписать и сдать куратору учебной группы до 08.06.2019! Без сданного заявления Ваш выбор учитываться не будет!</h4><br>
         <input type="submit" class="btn btn-primary" value="Распечатать заявление" />
         //<a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
     }

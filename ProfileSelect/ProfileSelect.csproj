@@ -77,6 +77,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.7.3\lib\net461\Rotativa.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -280,9 +283,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905302205029_20190531.cs" />
-    <Compile Include="Migrations\201905302205029_20190531.Designer.cs">
-      <DependentUpon>201905302205029_20190531.cs</DependentUpon>
+    <Compile Include="Migrations\201905312216528_20190601.cs" />
+    <Compile Include="Migrations\201905312216528_20190601.Designer.cs">
+      <DependentUpon>201905312216528_20190601.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
@@ -574,8 +577,14 @@
     <Content Include="App_Data\Заявление шаблон090304.docx" />
     <Content Include="App_Data\Заявление шаблон090301.docx" />
     <Content Include="App_Data\Заявление шаблон090303.docx" />
+    <Content Include="App_Data\Заявление шаблон010304.docx" />
+    <Content Include="App_Browsers\qt.browser" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Rotativa\help-wkhtmltoimage.txt" />
+    <Content Include="Rotativa\help-wkhtmltopdf.txt" />
+    <Content Include="Rotativa\wkhtmltoimage.exe" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
@@ -728,8 +737,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905302205029_20190531.resx">
-      <DependentUpon>201905302205029_20190531.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905312216528_20190601.resx">
+      <DependentUpon>201905312216528_20190601.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

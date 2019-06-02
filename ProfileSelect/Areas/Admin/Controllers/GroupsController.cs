@@ -49,6 +49,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
             {
                 var department = dbCotext.Departments.First(d => d.Id == groupViewModel.DepartmentId);
                 var direction = dbCotext.Directions.First(d => d.Id == groupViewModel.DirectionId);
+                var profile = dbCotext.Profiles.First(d => d.Id == groupViewModel.ProfileId);
                 //var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
 
                 dbCotext.Groups.Add(new Group

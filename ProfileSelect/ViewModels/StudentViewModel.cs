@@ -21,6 +21,7 @@ namespace ProfileSelect.ViewModels
         public int CurrentGroupId { get; set; }
         public string PreviewGroupName { get; set; }
         public int? PreviewGroupId { get; set; }
+        public string PreviewProfileName { get; set; }
         public string NewGroupName { get; set; }
         public int? NewGroupId { get; set; }
         public string DirectionName { get; set; }

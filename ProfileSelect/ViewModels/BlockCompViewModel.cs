@@ -10,5 +10,6 @@ namespace ProfileSelect.ViewModels
         public int SubjectsId { get; set; }
         public string SubjectName { get; set; }
         public int DirectionId { get; set; }
+        public bool BlockIsDelete { get; set; }
     }
 }

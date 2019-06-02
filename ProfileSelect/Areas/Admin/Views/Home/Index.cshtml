@@ -17,9 +17,12 @@
             <div class="col-md-4">
                 @{
                     var statusList = Model.Status;//.Remove(Model.Status.First(s=>s.Name=="Целевик"));
-                    statusList.Remove(Model.Status.First(s => s.Name == "Целевик"));
+                    if (statusList.Any())
+                    {
+                        statusList.Remove(Model.Status.First(s => s.Name == "Целевик"));
                     }
-                
+                }
+
                 @Html.DropDownListFor(x => x.StatusSelectId, new SelectList(statusList, "Id", "Name", Model.StatusSelectId), new { @class = "form-control", required = "" })
             </div>
             @*<select class="form-control" name="statusSelect">
@@ -56,16 +59,16 @@
 </div>
 <div class="panel">
     <div class="panel-body">
-        @using (Html.BeginForm("PrintUserInfo", "Home", FormMethod.Get, new {@class = "form-horizontal", enctype = "multipart/form-data"}))
+        @using (Html.BeginForm("PrintUserInfo", "Home", FormMethod.Get, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
         {
             <div class="form-group">
                 <div class="col-md-3">
                     @{
                         var usersList = new List<SelectListItem> {new SelectListItem
-                        {
-                            Value = "",
-                            Text = ""
-                        } };
+                                {
+                                    Value = "",
+                                    Text = ""
+                                } };
                         usersList.AddRange(Model.Students.Select(d => new SelectListItem
                         {
                             Text = d.UserName,
@@ -79,7 +82,10 @@
                 </div>
             </div>
         }
-        @using (Html.BeginForm("PrintGroupUsersInfo", "Home", FormMethod.Get, new {@class = "form-horizontal", enctype = "multipart/form-data"}))
+        <div class="form-group">
+            <a class="btn btn-primary pull-left" href="@Url.Action("PrintGroupUsersInfo", "Home", new {Area = "Admin"})">Скачать пароли студентов</a>
+        </div>
+        @*@using (Html.BeginForm("PrintGroupUsersInfo", "Home", FormMethod.Get, new {@class = "form-horizontal", enctype = "multipart/form-data"}))
         {
             <div class="form-group">
                 <div class="col-md-3">
@@ -94,6 +100,12 @@
                             Text = d.Name,
                             Value = d.Id.ToString()
                         }));
+                        groupsList.Add(new SelectListItem
+                        {
+                            Text= "Все",
+                            Value="Все"
+                        });
+
                     }
                     @Html.DropDownListFor(x => x.GroupId, new SelectList(groupsList, "Value", "Text"), new { @class = "form-control" })
                 </div>
@@ -101,7 +113,7 @@
                     <input type="submit" value="Печать паролей группы" class="btn btn-primary pull-left" />
                 </div>
             </div>
-        }
+        }*@
     </div>
 </div>
 <div class="panel">

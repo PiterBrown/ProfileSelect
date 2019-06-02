@@ -26,6 +26,7 @@ namespace ProfileSelect.Areas.Student.Controllers
                 {
                     Id = user.Id,
                     ClaimNumber = user.ClaimNumber + 1,
+                    UserName=user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Patronymic = user.Patronymic,
@@ -97,10 +98,12 @@ namespace ProfileSelect.Areas.Student.Controllers
                     {
                         BlockCompId = bc.Id,
                         BlockId = bc.Block.Id,
+                        BlockIsDelete = bc.Block.IsDelete,
                         ProfileId = bc.Block.Profile.Id,
                         SubjectsId = bc.Subject.Id,
                         SubjectName = bc.Subject.Name,
-                        DirectionId = bc.Block.Profile.Direction.Id
+                        DirectionId = bc.Block.Profile.Direction.Id,
+
                     }).ToList(),
                     Direction=user.Direction.Id
                 });
@@ -155,12 +158,13 @@ namespace ProfileSelect.Areas.Student.Controllers
                 {
                     templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон090304.docx");
                 };
-                if (user.Direction.Id == 5)
+                if (user.Direction.Id == 4)
                 {
                     templatePath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "Заявление шаблон010304.docx");
                 };
-                var tempDocxPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.docx");
-                var tempPdfPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), "temp.pdf");
+                var docId = Guid.NewGuid().ToString();
+                var tempDocxPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), $"{docId}.docx");
+                var tempPdfPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), $"{docId}.pdf");
                 using (var memoryStream = new MemoryStream())
                 {
                     var fileBytes = System.IO.File.ReadAllBytes(templatePath);
@@ -243,13 +247,11 @@ namespace ProfileSelect.Areas.Student.Controllers
                         if (user.Direction.Id == 2)
                         {
                             texts.First(t => t.Text == "Проф5").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 5).Priority.ToString();
-                            texts.First(t => t.Text == "Проф11").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 11).Priority.ToString();
+                            texts.First(t => t.Text == "Проф10").Text = user.ProfilePrioritys.First(p => p.Student.Id == user.Id && p.Profile.Id == 10).Priority.ToString();
                             texts.First(t => t.Text == "Бл8").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 8).Priority.ToString();
                             texts.First(t => t.Text == "Бл9").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 9).Priority.ToString();
                             texts.First(t => t.Text == "Бл10").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 10).Priority.ToString();
-                            texts.First(t => t.Text == "Бл11").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 11).Priority.ToString();
-                            texts.First(t => t.Text == "Бл12").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 12).Priority.ToString();
-                            texts.First(t => t.Text == "Бл13").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 13).Priority.ToString();
+                            
                         }
                         if (user.Direction.Id == 3)
                         {
@@ -260,7 +262,7 @@ namespace ProfileSelect.Areas.Student.Controllers
                             texts.First(t => t.Text == "Бл14").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 14).Priority.ToString();
                             texts.First(t => t.Text == "Бл15").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 15).Priority.ToString();
                         }
-                        if (user.Direction.Id == 5)
+                        if (user.Direction.Id == 4)
                         {
                             texts.First(t => t.Text == "Бл19").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 19).Priority.ToString();
                             texts.First(t => t.Text == "Бл20").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 20).Priority.ToString();

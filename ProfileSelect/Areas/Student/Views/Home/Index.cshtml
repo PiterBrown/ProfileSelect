@@ -10,12 +10,15 @@
         Текущая группа: <strong>@Model.CurrentGroupName</strong><br />
         @if (Model.PreviewGroupName != "" && Model.NewGroupName == "")
         {
-            <p>Предварительная группа: <strong>@Model.PreviewGroupName</strong></p>
+            @*вставить профиль*@
+            <p>Предварительный профиль: <strong>@{
+                
+                    }</strong></p>
         }
 
         @if (Model.NewGroupName != "")
         {
-            <p>Новая группа: <strong>@Model.NewGroupName</strong></p>
+            <p>Итоговый профиль: <strong></strong></p>
         }
     </h3>
 </div>
@@ -23,11 +26,15 @@
     <h4 class="pull-left">
         <ul>
             <li>Если Вы хотите написать заявление на выбор профиля, то нажмите на кнопку "Написать заявление"</li>
-            <li>После заполнения формы необходимо распечатать заявление, поставить свою подпись и сдать его преподавателю на зачете по Учебной практике</li>
-            <li><strong>Внимание!</strong>Если сданное преподавателю заявление будет отличаться от указанного на сайте, то оно будет аннулировано</li>
+            <li>Заполняйте заявление внимательно! Форма доступна для заполнения <strong>один</strong> раз</li>
+            <li>После заполнения формы необходимо распечатать заявление, поставить свою подпись и сдать его куратору группы до 08.06.2019</li>
+            <li><strong>Внимание!</strong>Если сданное заявление будет отличаться от указанного на сайте, то оно будет аннулировано</li>
         </ul>
     </h4>
 </div>
+@if (Model.ClaimNumber-1 == 0 || Model.UserName=="test")
+{
 <div class="col-md-12">
-    <a href="@Url.Action("WriteClaim", "Home", new {Area="Student"})" class="btn btn-primary pull-left">Написать заявление №@Model.ClaimNumber</a>
+    <a href="@Url.Action("WriteClaim", "Home", new { Area = "Student" })" class="btn btn-primary pull-left">Написать заявление @*№@Model.ClaimNumber*@</a>
 </div>
+}

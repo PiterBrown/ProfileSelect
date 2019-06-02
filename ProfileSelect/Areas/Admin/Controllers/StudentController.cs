@@ -32,7 +32,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 {
                     Id = g.Id,
                     Name = g.Name
-                }).ToList();
+                }).OrderBy(g=>g.Name).ToList();
                 var profiles = dbCotext.Profiles.Select(p => new ProfileViewModel
                 {
                     Id = p.Id,
@@ -113,6 +113,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 var store = new UserStore<ApplicationUser>(dbCotext);
                 var manager = new UserManager<ApplicationUser>(store);
                 manager.AddToRole(student.Id, Constants.RolesConstants.Student.Name);
+                //добавить проверку роли
                 return RedirectToAction("Students", "Home", new { Area = "Admin" });
             }
         }
@@ -134,12 +135,12 @@ namespace ProfileSelect.Areas.Admin.Controllers
                 var groups = dbCotext.Groups.Select(g => new GroupViewModel
                 {
                     Id = g.Id,
-                    Name = g.Name
+                    Name = g.Name,
                 }).ToList();
                 var profiles = dbCotext.Profiles.Select(p => new ProfileViewModel
                 {
                     Id = p.Id,
-                    Name = p.Name
+                    Name = p.Name,
                 }).ToList();
                 var student = dbCotext.Users.Where(d => !d.IsDeleted).First(u => u.Id == id);
                 return View(new StudentViewModel
@@ -162,7 +163,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     PreviewGroupId = student.PreviewGroup?.Id ?? -1,
                     NewGroupId = student.NewGroup?.Id ?? -1,
                     DirectionId = student.Direction?.Id ?? -1,
-                    NewProfileId = student.NewProfile?.Id ?? -1
+                    NewProfileId = student.NewProfile?.Id ?? -1,
                 });
             }
         }
@@ -246,7 +247,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
             using (var dbCotext = new ApplicationDbContext())
             {
                 var student = dbCotext.Users.First(s => s.Id == id);
-                student.BusyReason = text;
+                student.StatusComm = text;
                 dbCotext.SaveChanges();
 
                 var message = string.Format("Текст причины статуса для {0} {1} {2} сохранен", student.LastName, student.FirstName, student.Patronymic);

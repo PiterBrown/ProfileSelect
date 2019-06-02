@@ -202,7 +202,7 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     var groupCol = 0;
                     var baseCol = 0;
                     var baseNameCol = 0;
-                    for (int c=2;c<=colCount;c++)
+                    for (int c=1;c<=colCount;c++)
                     {
                         switch(usersWorksheet.Cells[1, c].Text)
                         {
@@ -232,17 +232,21 @@ namespace ProfileSelect.Areas.Admin.Controllers
                         var группа = usersWorksheet.Cells[r, groupCol].Text;
                         var целевик = usersWorksheet.Cells[r, baseCol].Text;
                         var база = usersWorksheet.Cells[r, baseNameCol].Text;
+                        bool неБеспокоить= статус.Name == "Академический отпуск" || статус.Name == "МО"|| целевик == "Да" ? true:false;
                         if (целевик=="Да")
                         {
                             статус = dbContext.Statuses.First(s => s.Name == "Целевик");
+                            
                         }
                         if (статусКом!=null && база!="")
                         {
                             статусКом = статусКом + "; " + база;
+                            
                         }
                         if (статусКом==null && база!="")
                         {
                             статусКом = база;
+                           
                         }
                         var group = dbContext.Groups.FirstOrDefault(g => g.Name == группа);
                         var student = dbContext.Users.Where(d => !d.IsDeleted).FirstOrDefault(s => s.Number==личныйНомер);
@@ -279,7 +283,9 @@ namespace ProfileSelect.Areas.Admin.Controllers
                                 IsActive = true,
                             CurrentGroup = group,
                             Status = статус,
-                            StatusComm=статусКом
+                            StatusComm=статусКом,
+                            IsBusy=неБеспокоить,
+                            Direction=group.Direction
                             //ClaimNumber = 1
                         };
                             dbContext.Users.Add(student);
@@ -1579,18 +1585,57 @@ namespace ProfileSelect.Areas.Admin.Controllers
             }
         }
 
-        public ActionResult PrintGroupUsersInfo(int GroupId)
+        public FileResult PrintGroupUsersInfo()
         {
             using (var dbContext = new ApplicationDbContext())
             {
-                var groups = dbContext.Groups.First(u => u.Id == GroupId);
-                return View(groups.NewGroupStudents.Select(s => new StudentViewModel
-                {
-                    Id = s.Id,
-                    UserName = s.UserName,
-                    Password = s.PasswordHash,
-                    ValidUntil = s.ValidUntil
-                }).ToList());
+                //var groups = dbContext.Groups.First(u => u.Id == GroupId);
+                //return View(groups.NewGroupStudents.Select(s => new StudentViewModel
+                //{
+                //    Id = s.Id,
+                //    UserName = s.UserName,
+                //    Password = s.PasswordHash,
+                //    ValidUntil = s.ValidUntil
+                //}).ToList());
+                
+                    using (var excelPackage = new ExcelPackage())
+                    {
+                        var role = dbContext.Roles.First(r => r.Name == Constants.RolesConstants.Student.Name);
+                        var students = dbContext.Users.Where(u => !u.IsDeleted && u.IsActive && u.Roles.Any(r => r.RoleId == role.Id)).OrderBy(u=>u.CurrentGroup.Name).ToList();
+
+                        var worksheet = excelPackage.Workbook.Worksheets.Add("Список студентов");
+                        worksheet.Column(1).Width = 5;
+                        worksheet.Column(2).Width = 11;
+                        worksheet.Column(3).Width = 11;
+                        worksheet.Column(4).Width = 11;
+                        worksheet.Column(5).Width = 30;
+                        worksheet.Column(6).Width = 17;
+                       
+
+                        worksheet.Cells[1, 1].Value = "№";
+                        worksheet.Cells[1, 2].Value = "ФИО";
+                        worksheet.Cells[1, 3].Value = "Группа";
+                        worksheet.Cells[1, 4].Value = "Логин";
+                        worksheet.Cells[1, 5].Value = "Пароль";
+                        worksheet.Cells[1, 6].Value = "Действует до";
+                       
+
+                        var i = 2;
+                    foreach (var student in students)
+                    {
+                        worksheet.Cells[i, 1].Value = i - 1;
+                        worksheet.Cells[i, 2].Value = student.FullName;
+                        worksheet.Cells[i, 3].Value = student.CurrentGroup.Name;
+                        worksheet.Cells[i, 4].Value = student.UserName;
+                        worksheet.Cells[i, 5].Value = student.PasswordHash;
+                        worksheet.Cells[i, 6].Value = (student.ValidUntil.HasValue? student.ValidUntil.Value.ToShortDateString():"Бессрочно");
+                        i++;
+                    }
+
+                        var bytes = excelPackage.GetAsByteArray();
+                        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Пароли студентов.xlsx");
+                    }
+                
             }
         }
     }
