@@ -33,7 +33,7 @@
                     <td>
                         <div class="form-horizontal" style="margin-left: 10px;">
                             <div class="form-group">
-                                <input type="checkbox" class="is-bisy-chk user-selected-number" @(item.IsDist ? "checked=''" : "") data-id="@item.Id" />Не участвует
+                                <input type="checkbox" class="is-bisy-chk" @(item.IsDist ? "checked=''" : "") data-id="@item.Id" />Не участвует
                             </div>
                         </div>
                     </td>
@@ -61,46 +61,11 @@
 
 @section scripts{
     <script type="text/javascript">
-        $('#groups-table').DataTable({
-            language: rus_lang,
-            responsive: true,
-            columnDefs: [
-                {
-                    targets: [0],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [1],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [2],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [3],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [4],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [5],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [6],
-                    responsivePriority: 1
-                },
-                {
-                    targets: [7],
-                    responsivePriority: 1
-                }
-
-                
-            ]
-        });
+        //$('#groups-table').DataTable({
+        //    language: rus_lang,
+        //    responsive: true
+            
+        //});
         $('.is-bisy-chk').change(function () {
             $.ajax({
                 type: "POST",

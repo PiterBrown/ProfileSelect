@@ -1,0 +1,135 @@
+﻿@*@model IEnumerable<ProfileSelect.ViewModels.ProfileSubjectSelectViewModel>*@
+@model ProfileSelect.ViewModels.ProfileSubjectSelectViewModel
+@{
+    Layout = "~/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = "Студенты";
+}
+@{
+    var profiles = Model.ProfilePriority.GroupBy(q => q.ProfileName).ToArray();
+    var blocks = Model.BlockPriority.GroupBy(q => q.BlockId).ToArray();
+}
+    <table id="students-table" class="table table-bordered">
+        <thead>
+            <tr>
+                <th rowspan="2">Фамилия</th>
+                <th rowspan="2">Имя</th>
+                <th rowspan="2">Отчество</th>
+                <th rowspan="2">Текущая группа</th>
+                <th rowspan="2">Участвует</th>
+                @foreach (var p in profiles)
+                {
+                    var colspan = Model.BlockPriority.Where(c => c.ProfileName == p.Key).GroupBy(q => q.DepartmentName).Count();
+                    <th colspan="@(colspan+1)">@p.Key</th>
+                }
+            </tr>
+            <tr>
+                @foreach (var p in profiles)
+                {
+                    <th>Проф</th>
+                    foreach (var l in Model.BlockPriority.Where(c => c.ProfileName == p.Key).GroupBy(q => q.DepartmentName))
+                    {
+
+                        <th>@l.Key</th>
+                    }
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model.Student.Where(q=>q.CurrentGroupName=="ИВБО-08-18").OrderBy(q => q.CurrentGroupId).ThenBy(q => q.LastName))
+            {
+                var countprofiles = Model.ProfilePriority.Where(q => q.DirectionId == s.DirectionId).GroupBy(q => q.ProfileName).Count();
+
+                <tr>
+                    <td>@s.LastName</td>
+                    <td>@s.FirstName</td>
+                    <td>@s.Patronymic</td>
+                    <td>@s.CurrentGroupName</td>
+                    <td>
+                        <div class="form-horizontal" style="margin-left: 10px;">
+                            <div class="form-group">
+                                <input type="checkbox" class="is-bisy-chk" @(s.IsParc ? "checked=''" : "") data-id="@s.Id" />Участвует
+                            </div>
+                        </div>
+                    </td>
+                    @{
+
+                        if (Model.ProfilePriority.Where(q => q.StudentId == s.Id).Any())
+                        {
+                            var firstprofile = Model.ProfilePriority.Where(q => q.StudentId == s.Id).GroupBy(q => q.ProfileName).First();
+                            var firstblock = Model.BlockPriority.Where(q => q.ProfileName == firstprofile.Key && q.StudentId == s.Id).GroupBy(q => q.BlockId).First();
+                            int i = 0;
+                            int m = 0;
+                            int c = 0;
+                            int cp = 0;
+                            int cb = 0;
+                            while (profiles[i].Key != firstprofile.Key)
+                            {
+                                i++;
+                            }
+                            while (blocks[m].Key != firstblock.Key)
+                            {
+                                m++;
+                            }
+                            i = i + m;
+                            for (var e = 0; e < i; e++)
+                            {
+                                <td></td>
+                            }
+                            foreach (var p in Model.ProfilePriority.Where(q => q.StudentId == s.Id).Take(countprofiles))
+                            {
+                                var countblocks = Model.BlockPriority.Where(q => q.ProfileName == p.ProfileName).GroupBy(q => q.DepartmentName).Count();
+                                <th>@p.Priority,@p.ProfileName</th>
+                                cp++;
+                                foreach (var b in Model.BlockPriority.Where(w => w.ProfileName == p.ProfileName && w.StudentId == s.Id).Take(countblocks))
+                                {
+                                    <td>@b.Priority,@b.DepartmentName</td>
+                                    cb++;
+                                }
+                            }
+                            c = profiles.Count() + blocks.Count();
+                            c = c - (cp + cb + i);
+                            for (var e = 0; e < c; e++)
+                            {
+                                <td></td>
+                            }
+                        }
+                        else
+                        {
+                            for (var e = 0; e < (profiles.Count() + blocks.Count()); e++)
+                            {
+                                <td bgcolor="#ff0000"></td>
+                            }
+                        }
+
+                    }
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section scripts{
+        <script type="text/javascript">
+                //$('#students-table').DataTable({
+                //    language: rus_lang,
+                //    responsive: false
+                //});
+                $('.is-bisy-chk').change(function () {
+                  $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetIsParc", "Home", new {Area="Admin"})',
+                    data: JSON.stringify({
+                      id: $(this).data('id'),
+                      isParc: $(this).is(':checked')
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                      toastr.info(response.Message);
+                    }
+                  });
+                });
+
+        </script>
+    }

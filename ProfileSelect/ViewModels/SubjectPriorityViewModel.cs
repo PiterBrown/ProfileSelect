@@ -1,12 +1,10 @@
 ﻿namespace ProfileSelect.ViewModels
 {
-    public class BlockPriorityViewModel
+    public class SubjectPriorityViewModel
     {
         public int Id { get; set; }
-        public int BlockId { get; set; }
         public int Priority { get; set; }
+        public int BlockId { get; set; }
         public string DepartmentName { get; set; }
-        public string ProfileName { get; set; }
-        public string StudentId { get; set; }
     }
 }

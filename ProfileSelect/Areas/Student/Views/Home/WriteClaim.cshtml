@@ -1,7 +1,7 @@
 ﻿@model ProfileSelect.ViewModels.ClaimViewModel
 @{
     Layout = "~/Views/Shared/_BaseLayout.cshtml";
-    ViewBag.Title = "Написать заявление №" + Model.ClaimNuber;
+    ViewBag.Title = "Написать заявление";
 }
 
 <div class="table-responsive col-md-12">
@@ -11,6 +11,7 @@
     <ul>
         <li>Приоритеты не могут повторяться в столбце "Приоритет профиля"</li>
         <li>Приоритеты не могут повторяться в столбце "Приоритет дисциплин" среди строк, принадлежащих одному профилю</li>
+        В случае появления ошибки при печати заявления в связи с загруженностью сервера просим подождать 1-2 минуты и попробовать попытку снова
         </ul></h4>
     @using (Html.BeginForm("GeneratePdf", "Home", FormMethod.Get, new { Area = "Student", target = "_blank", id = "send-data-form" }))
     {
@@ -110,8 +111,9 @@
             }
         </table>
         <h4><strong>Внимание!</strong> Заявление необходимо распечатать, подписать и сдать куратору учебной группы до 08.06.2019! Без сданного заявления Ваш выбор учитываться не будет!</h4><br>
-        <input type="submit" class="btn btn-primary" value="Распечатать заявление" />
-        //<a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
+                       @*<strong> В случае появления ошибки при печати заявления в связи с загруженностью сервера просим подождать 1 - 2 минуты и попробовать попытку снова </strong ><br>*@
+                    <input type="submit" class="btn btn-primary" value="Распечатать заявление" />
+        <a class="btn btn-primary" href=@Url.Action("Index","Home",new {Area = "Student"})>Отправить заявление</a>
     }
 </div>
 

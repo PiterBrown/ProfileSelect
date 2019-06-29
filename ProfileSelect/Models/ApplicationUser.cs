@@ -19,6 +19,7 @@ namespace ProfileSelect.Models
         public string FullName { get; set; }
         public string Number { get; set; }
         public bool IsActive { get; set; }
+        public bool IsParc { get; set; }
         public string StatusComm { get; set; }
         public bool IsBusy { get; set; }
         public string BusyReason { get; set; }

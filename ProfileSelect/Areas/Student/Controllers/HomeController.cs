@@ -165,6 +165,7 @@ namespace ProfileSelect.Areas.Student.Controllers
                 var docId = Guid.NewGuid().ToString();
                 var tempDocxPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), $"{docId}.docx");
                 var tempPdfPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), $"{docId}.pdf");
+                var tempLogPath = Path.Combine(AppDomain.CurrentDomain.GetData("DataDirectory").ToString(), $"{docId}-log.txt");
                 using (var memoryStream = new MemoryStream())
                 {
                     var fileBytes = System.IO.File.ReadAllBytes(templatePath);
@@ -268,25 +269,56 @@ namespace ProfileSelect.Areas.Student.Controllers
                             texts.First(t => t.Text == "Бл20").Text = user.BlockPrioritys.First(p => p.Student.Id == user.Id && p.Block.Id == 20).Priority.ToString();
                         }
                     }
-
-                    using (FileStream file = new FileStream(tempDocxPath, FileMode.Create, FileAccess.Write))
+                    try
+                        {
+                        using (FileStream file = new FileStream(tempDocxPath, FileMode.Create, FileAccess.Write))
+                        {
+                            memoryStream.WriteTo(file);
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        memoryStream.WriteTo(file);
+                        StreamWriter file = new StreamWriter(new FileStream(tempLogPath, FileMode.OpenOrCreate, FileAccess.Write));
+                            file.Write(ex.Message);
+                            file.Close();
                     }
                 }
 
-                Application appWord = new Application();
-                var wordDocument = appWord.Documents.Open(tempDocxPath);
-                wordDocument.ExportAsFixedFormat(tempPdfPath, WdExportFormat.wdExportFormatPDF);
 
-                appWord.DisplayAlerts = WdAlertLevel.wdAlertsNone;
-                wordDocument.Close();
-                appWord.Quit();
-                if (wordDocument != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(wordDocument);
-                if (appWord != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(appWord);
-                GC.Collect();
+                if (!System.IO.File.Exists(tempDocxPath))
+                {
+                    System.Threading.Thread.Sleep(5000);
+                }
+                try
+                {
+                    Application appWord = new Application();
+                    var wordDocument = appWord.Documents.Open(tempDocxPath);
+                    wordDocument.ExportAsFixedFormat(tempPdfPath, WdExportFormat.wdExportFormatPDF);
+                    appWord.DisplayAlerts = WdAlertLevel.wdAlertsNone;
+                    wordDocument.Close();
+                    appWord.Quit();
+                    if (wordDocument != null)
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(wordDocument);
+                    if (appWord != null)
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(appWord);
+                    GC.Collect();
+                }
+                catch (Exception ex)
+                {
+                    StreamWriter file = new StreamWriter(new FileStream(tempLogPath, FileMode.OpenOrCreate, FileAccess.Write));
+                            file.Write(ex.Message);
+                    file.Close();
+                }
+                
+               
+
+                if (!System.IO.File.Exists(tempPdfPath))
+                {
+                    System.Threading.Thread.Sleep(2000);
+                }
+
+
+                
 
                 using (var memoryStream = new MemoryStream())
                 {

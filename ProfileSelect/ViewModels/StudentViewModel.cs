@@ -14,6 +14,7 @@ namespace ProfileSelect.ViewModels
         public string Number { get; set; }
         public string Password { get; set; }
         public bool IsActive { get; set; }
+        public bool IsParc { get; set; }
         public string StatusComm { get; set; }
         public string StatusName { get; set; }
         public int StatusId { get; set; }

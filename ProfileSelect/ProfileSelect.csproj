@@ -283,9 +283,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201905312216528_20190601.cs" />
-    <Compile Include="Migrations\201905312216528_20190601.Designer.cs">
-      <DependentUpon>201905312216528_20190601.cs</DependentUpon>
+    <Compile Include="Migrations\201906231226076_23062019.cs" />
+    <Compile Include="Migrations\201906231226076_23062019.Designer.cs">
+      <DependentUpon>201906231226076_23062019.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
@@ -313,9 +313,11 @@
     <Compile Include="ViewModels\DirectionViewModel.cs" />
     <Compile Include="ViewModels\GroupViewModel.cs" />
     <Compile Include="ViewModels\ProfilePriorityViewModel.cs" />
+    <Compile Include="ViewModels\ProfileSubjectSelectViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\StudentViewModel.cs" />
+    <Compile Include="ViewModels\SubjectPriorityViewModel.cs" />
     <Compile Include="ViewModels\SubjectViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -579,6 +581,7 @@
     <Content Include="App_Data\Заявление шаблон090303.docx" />
     <Content Include="App_Data\Заявление шаблон010304.docx" />
     <Content Include="App_Browsers\qt.browser" />
+    <Content Include="Areas\Admin\Views\Home\ProfileSubjectSelect.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Rotativa\help-wkhtmltoimage.txt" />
@@ -737,8 +740,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201905312216528_20190601.resx">
-      <DependentUpon>201905312216528_20190601.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201906231226076_23062019.resx">
+      <DependentUpon>201906231226076_23062019.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
