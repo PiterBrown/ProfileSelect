@@ -175,35 +175,35 @@
                         }
                     ]
                 });
-                $('.is-bisy-chk').change(function () {
-                  $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("SetIsBusy", "Student", new {Area="Admin"})',
-                    data: JSON.stringify({
-                      id: $(this).data('id'),
-                      isBusy: $(this).is(':checked')
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                      toastr.info(response.Message);
-                    }
-                  });
+                $(document).on("change", ".is-bisy-chk", function() {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SetIsBusy", "Student", new {Area="Admin"})',
+                        data: JSON.stringify({
+                            id: $(this).data('id'),
+                            isBusy: $(this).is(':checked')
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            toastr.info(response.Message);
+                        }
+                    });
                 });
-                $('.bisy-txt').change(function() {
-                  $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("SetIsBusyText", "Student", new {Area="Admin"})',
-                    data: JSON.stringify({
-                      id: $(this).data('id'),
-                      text: $(this).val()
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                      toastr.info(response.Message);
-                    }
-                  });
+                $(document).on("change", ".bisy-txt", function() {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SetIsBusyText", "Student", new {Area="Admin"})',
+                        data: JSON.stringify({
+                            id: $(this).data('id'),
+                            text: $(this).val()
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            toastr.info(response.Message);
+                        }
+                    });
                 });
             </script>
         }
