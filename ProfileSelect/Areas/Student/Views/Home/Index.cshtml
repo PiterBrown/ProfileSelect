@@ -2,6 +2,7 @@
 @{
     Layout = "~/Views/Shared/_BaseLayout.cshtml";
     ViewBag.Title = "Личный кабинет пользователя";
+    var date = new DateTime(2019, 07, 09, 10, 00, 00);
 }
 
 <div class="col-md-12">
@@ -11,29 +12,35 @@
         @if (Model.PreviewGroupName != "" && Model.NewGroupName == "")
         {
             @*вставить профиль*@
-            <p>Предварительный профиль: <strong>@{
-                
-                    }</strong></p>
+            <p>Предварительный профиль: @Model.NewProfileName (
+        @foreach (var g in Model.Groups.Where(l => l.ProfileName == Model.NewProfileName && !l.IsDist && !l.IsDelete))
+            {
+                <strong>@g.Name, </strong>
+            }
+        )
+        </p>
         }
 
         @if (Model.NewGroupName != "")
         {
-            <p>Итоговый профиль: <strong></strong></p>
+            <p>Итоговый профиль: <strong>@Model.NewGroupName, @Model.NewProfileName, @Model.NewDepartmentName</strong></p>
         }
     </h3>
 </div>
-<div class="col-md-12">
+@*<div class="col-md-12">
     <h4 class="pull-left">
         <ul>
             <li>Если Вы хотите написать заявление на выбор профиля, то нажмите на кнопку "Написать заявление"</li>
-            @*<li>Заполняйте заявление внимательно! Форма доступна для заполнения <strong>один</strong> раз</li>*@
+            @*<li>Заполняйте заявление внимательно! Форма доступна для заполнения <strong>один</strong> раз</li>
             <li>После заполнения формы необходимо распечатать заявление, поставить свою подпись и сдать его куратору группы до 08.06.2019</li>
             <li><strong>Внимание!</strong>Если сданное заявление будет отличаться от указанного на сайте, то оно будет аннулировано</li>
             <li><strong>В случае появления ошибки при печати заявления в связи с загруженностью сервера просим подождать 1-2 минуты и попробовать попытку снова</strong></li>
         </ul>
     </h4>
-</div>
-@if (Model.ClaimNumber-1 == 0 || Model.UserName=="test")
+    <h3>Возможность написать заявление закроется: 09.07.2019, 10:00</h3>
+</div>*@
+
+@if ((Model.ClaimNumber-1 == 0 || Model.UserName=="test") && System.DateTime.Now<=date)
 {
 <div class="col-md-12">
     <a href="@Url.Action("WriteClaim", "Home", new { Area = "Student" })" class="btn btn-primary pull-left">Написать заявление @*№@Model.ClaimNumber*@</a>

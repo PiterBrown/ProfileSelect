@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using ProfileSelect.Models;
 using ProfileSelect.ViewModels;
+using Constants = ProfileSelect.Migrations.Constants;
 
 namespace ProfileSelect.Areas.Admin.Controllers
 {
@@ -98,6 +99,92 @@ namespace ProfileSelect.Areas.Admin.Controllers
                     Directions = directions,
                     Statuses = statuses
                 });
+            }
+        }
+
+        public ActionResult ChangeNumbers()
+        {
+            using (var dbCotext = new ApplicationDbContext())
+            {
+                //var department = dbCotext.Departments.First(d => d.Id == groupViewModel.DepartmentId);
+                var direction = dbCotext.Directions.Where(d=>!d.IsDeleted).ToList();
+                var students = dbCotext.Users.Where(s => !s.IsDeleted && s.IsActive).ToList();
+                var groups = dbCotext.Groups.Where(g => !g.IsDeleted).ToList();
+                //var status = dbCotext.Statuses.First(d => d.Id == groupViewModel.StatusId);
+                foreach (var d in direction)
+                {
+                    var studentsCount = students.Where(s => s.Direction.Id == d.Id).Count();
+                    var groupCount = groups.Where(g => g.Direction.Id == d.Id && !g.IsDistr).Count();
+                    var numbers = studentsCount / groupCount;
+                   
+                    var balanceNumbers = studentsCount % groupCount;
+                    foreach (var g in groups.Where(q=>q.Direction==d))
+                    {
+                        if (!g.IsDistr)
+                        {
+                            g.Count = numbers;
+                        }
+                        else
+                        {
+                            g.Count = 0;
+                        }
+                    }
+                    if (balanceNumbers!=0)
+                    {
+                        for (var i=0;i<balanceNumbers;i++)
+                        {
+                            groups.Where(g=>g.Direction==d).ElementAt(i).Count++;
+                        }
+                    }
+                }
+
+                dbCotext.SaveChanges();
+                return RedirectToAction("Groups", "Home", new { Area = "Admin" });
+            }
+        }
+
+        public ActionResult D()
+        {
+            using (var dbContext = new ApplicationDbContext())
+            {
+
+                var direction = dbContext.Directions.Where(d => !d.IsDeleted).ToList();
+                var role = dbContext.Roles.First(r => r.Name == Constants.RolesConstants.Student.Name);
+                var students = dbContext.Users.Where(s=> s.Roles.Any(r => r.RoleId == role.Id)).ToList();
+                var profiles = dbContext.Profiles.Where(s => !s.IsDeleted).ToList();
+                var blocks = dbContext.Blocks.Where(s => !s.IsDelete).ToList();
+                var profilePriorities = dbContext.ProfilePrioritys.OrderByDescending(p => p.Id).ToList();
+                var blockpriorities = dbContext.BlockPrioritys.ToList();
+                int ss = 0;
+
+                foreach (var s in students)
+                {
+                    var profilesCount = profiles.Where(p => p.Direction==s.Direction).Count();
+                    var blocksCount = blocks.Where(b => s.CurrentGroup.Direction.Id == b.Profile.Direction.Id).Count();
+                    var tempProfilePriorities = profilePriorities.Where(p => p.Student.Id == s.Id).OrderByDescending(p=>p.Id).ToList();
+                    var tempProfilePrioritiesCount = tempProfilePriorities.Count();
+                    var tempBlockPriorities = blockpriorities.Where(b => b.Student.Id == s.Id).OrderByDescending(b=>b.Id).ToList();
+                    var tempBlockPrioritiesCount = tempBlockPriorities.Count();
+                    if (tempProfilePriorities.Count() > profilesCount)
+                    {
+                        for (var i = profilesCount; i < tempProfilePrioritiesCount; i++)
+                        {
+                            tempProfilePriorities.ElementAt(i).IsDelete = true;
+                        }
+                    }
+                    if (tempBlockPrioritiesCount > blocksCount)
+                    {
+                        for (var i = blocksCount; i < tempBlockPrioritiesCount; i++)
+                        {
+                            tempBlockPriorities.ElementAt(i).IsDelete = true;
+                        }
+                    }
+                    ss++;
+                    dbContext.SaveChanges();
+                }
+                //dbContext.SaveChanges();
+
+                return RedirectToAction("ProfileSubjectSelect", "Home", new { Area = "Admin" });
             }
         }
 

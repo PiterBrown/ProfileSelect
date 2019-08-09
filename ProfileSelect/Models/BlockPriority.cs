@@ -6,5 +6,6 @@
         public ApplicationUser Student { get; set; }
         public Block Block { get; set; }
         public int Priority { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

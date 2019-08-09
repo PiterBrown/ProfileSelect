@@ -9,5 +9,6 @@
         public virtual ApplicationUser Student { get; set; }
         public virtual Profile Profile { get; set; }
         public int Priority { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

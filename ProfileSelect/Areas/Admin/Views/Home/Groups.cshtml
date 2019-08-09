@@ -6,6 +6,7 @@
 
 <div class="table-responsive col-md-12">
     <a href="@Url.Action("Add", "Groups", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Добавить группу</a>
+    <a href="@Url.Action("ChangeNumbers", "Groups", new {Area="Admin"})" class="btn btn-primary pull-left margin-bottom-10">Определить численность</a>
     <table id="groups-table" class="table table-bordered">
         <thead>
             <tr>
@@ -20,7 +21,7 @@
         </thead>
         <tbody>
             @{ var i = 0;}
-            @foreach (var item in Model.OrderBy(m=>m.DirectionName))
+            @foreach (var item in Model.OrderBy(m => m.DirectionName))
             {
                 <tr>
                     @{

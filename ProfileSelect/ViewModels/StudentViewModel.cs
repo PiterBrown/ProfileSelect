@@ -27,6 +27,9 @@ namespace ProfileSelect.ViewModels
         public int? NewGroupId { get; set; }
         public string DirectionName { get; set; }
         public int DirectionId { get; set; }
+        public string NewDepartmentName { get; set; }
+        public int NewDepartmentId { get; set; }
+        public int DepartmentId { get; set; }
         public string NewProfileName { get; set; }
         public int? NewProfileId { get; set; }
         public bool IsDeleted { get; set; }

@@ -26,13 +26,31 @@ namespace ProfileSelect.Areas.Student.Controllers
                 {
                     Id = user.Id,
                     ClaimNumber = user.ClaimNumber + 1,
-                    UserName=user.UserName,
+                    UserName = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Patronymic = user.Patronymic,
                     CurrentGroupName = user.CurrentGroup.Name,
                     PreviewGroupName = user.PreviewGroup != null ? user.PreviewGroup.Name : "",
-                    NewGroupName = user.NewGroup != null ? user.NewGroup.Name : ""
+                    NewGroupName = user.NewGroup != null ? user.NewGroup.Name : "",
+                    NewProfileId = user.NewProfileId!=null ? user.NewProfileId : 0,
+                    NewProfileName = user.NewProfile!=null ? user.NewProfile.Name : "",
+                    NewDepartmentId=user.NewDepartment!=null? user.NewDepartment.Id:0,
+                    NewDepartmentName=user.NewDepartment!=null?user.NewDepartment.ShortName:"",
+                    DirectionId=user.Direction.Id,
+                    DepartmentId=user.PreviewGroup!=null?user.PreviewGroup.Department.Id:0,
+                    Groups = dbContext.Groups.Where(g => g.Direction.Id == user.Direction.Id).Select(g=>new GroupViewModel {
+                        Id=g.Id,
+                        Name=g.Name,
+                        DirectionId=g.Direction.Id,
+                        DirectionName=g.Direction.Name,
+                        DepartmentId=g.Department.Id,
+                        DepartmentName=g.Department.ShortName,
+                        ProfileId=g.Profile.Id,
+                        ProfileName=g.Profile.Name,
+                        IsDelete=g.IsDeleted,
+                        IsDist=g.IsDistr
+                    }).ToList()
                 });
             }
         }

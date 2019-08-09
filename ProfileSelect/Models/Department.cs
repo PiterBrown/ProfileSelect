@@ -13,5 +13,6 @@ namespace ProfileSelect.Models
         public bool IsCompany { get; set; }
         public bool IsDeleted { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
+        public virtual ICollection<ApplicationUser> Students { get; set; }
     }
 }

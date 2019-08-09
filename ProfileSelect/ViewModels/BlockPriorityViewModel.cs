@@ -8,5 +8,6 @@
         public string DepartmentName { get; set; }
         public string ProfileName { get; set; }
         public string StudentId { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

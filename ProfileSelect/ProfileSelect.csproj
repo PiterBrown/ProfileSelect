@@ -283,9 +283,29 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201906231226076_23062019.cs" />
-    <Compile Include="Migrations\201906231226076_23062019.Designer.cs">
-      <DependentUpon>201906231226076_23062019.cs</DependentUpon>
+    <Compile Include="Migrations\201907021248490_02072019.cs" />
+    <Compile Include="Migrations\201907021248490_02072019.Designer.cs">
+      <DependentUpon>201907021248490_02072019.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907021434207_2_02072019.cs" />
+    <Compile Include="Migrations\201907021434207_2_02072019.Designer.cs">
+      <DependentUpon>201907021434207_2_02072019.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907031923510_03072019.cs" />
+    <Compile Include="Migrations\201907031923510_03072019.Designer.cs">
+      <DependentUpon>201907031923510_03072019.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907031949004_2_03072019.cs" />
+    <Compile Include="Migrations\201907031949004_2_03072019.Designer.cs">
+      <DependentUpon>201907031949004_2_03072019.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907032148302_3_03072019.cs" />
+    <Compile Include="Migrations\201907032148302_3_03072019.Designer.cs">
+      <DependentUpon>201907032148302_3_03072019.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907050526538_05072019.cs" />
+    <Compile Include="Migrations\201907050526538_05072019.Designer.cs">
+      <DependentUpon>201907050526538_05072019.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Constants.cs" />
@@ -582,6 +602,8 @@
     <Content Include="App_Data\Заявление шаблон010304.docx" />
     <Content Include="App_Browsers\qt.browser" />
     <Content Include="Areas\Admin\Views\Home\ProfileSubjectSelect.cshtml" />
+    <Content Include="App_Data\Заявление на смену группыdocx.docx" />
+    <Content Include="App_Data\СРС_Инструкция для студентов.docx" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Rotativa\help-wkhtmltoimage.txt" />
@@ -740,13 +762,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201906231226076_23062019.resx">
-      <DependentUpon>201906231226076_23062019.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201907021248490_02072019.resx">
+      <DependentUpon>201907021248490_02072019.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907021434207_2_02072019.resx">
+      <DependentUpon>201907021434207_2_02072019.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907031923510_03072019.resx">
+      <DependentUpon>201907031923510_03072019.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907031949004_2_03072019.resx">
+      <DependentUpon>201907031949004_2_03072019.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907032148302_3_03072019.resx">
+      <DependentUpon>201907032148302_3_03072019.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907050526538_05072019.resx">
+      <DependentUpon>201907050526538_05072019.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

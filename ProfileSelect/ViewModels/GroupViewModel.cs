@@ -11,10 +11,12 @@ namespace ProfileSelect.ViewModels
         public string DepartmentName { get; set; }
         public int DepartmentId { get; set; }
         public int ProfileId { get; set; }
+        public string ProfileName { get; set; }
         //public string StatusName { get; set; }
         //public int StatusId { get; set; }
         public int Count { get; set; }
         public bool IsDist { get; set; }
+        public bool IsDelete { get; set; }
         public List<ProfileViewModel> Profiles { get; set; }
         public List<DirectionViewModel> Directions { get; set; }
         public List<DepartmentViewModel> Departments { get; set; }

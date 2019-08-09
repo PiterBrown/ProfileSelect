@@ -8,5 +8,6 @@
         public string ProfileName { get; set; }
         public string StudentId { get; set; }
         public int DirectionId { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

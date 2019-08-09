@@ -28,6 +28,10 @@ namespace ProfileSelect.Models
         public virtual Group PreviewGroup { get; set; }
         public virtual Group NewGroup { get; set; }
         public virtual Direction Direction { get; set; }
+        //public virtual Direction NewDirection { get; set; } //Удалить при дальнейшей разработке
+        [Column("NewDepartment_Id")]
+        public int? NewDepartmentId { get; set; }
+        public virtual Department NewDepartment { get; set; }
         [Column("NewProfile_Id")]
         public int? NewProfileId { get; set; }
         public virtual Profile NewProfile { get; set; }

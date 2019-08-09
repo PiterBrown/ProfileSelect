@@ -11,6 +11,7 @@ namespace ProfileSelect.Models
         public string Name { get; set; }
         public virtual Direction Direction { get; set; }
         public virtual Department Department { get; set; }
+        public virtual Profile Profile { get; set; }
         public bool IsDistr { get; set; }
         public int Count { get; set; }
         public bool IsDeleted { get; set; }
